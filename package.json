@@ -17,10 +17,12 @@
   },
   "homepage": "https://github.com/cuhacking/application-server#readme",
   "dependencies": {
-    "express": "^4.17.1",
     "crypto-js": "^3.1.9-1",
+    "express": "^4.17.1",
     "firebase-admin": "^7.3.0",
     "jquery": "^3.4.1",
-    "mailchimp-api-v3": "^1.13.0"
+    "mailchimp-api-v3": "^1.13.0",
+    "swagger-jsdoc": "^3.2.9",
+    "swagger-ui-express": "^4.0.6"
   }
 }
