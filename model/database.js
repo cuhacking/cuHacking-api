@@ -12,12 +12,20 @@
  */
  const admin = require('firebase-admin');
  
- // Uncomment this line and add credentials if running on a local server (i.e. not Google Cloud Platform)
- // const serviceAccount = require('JSON-CREDENTIALS')
+ // Uncomment this block and add credentials if running on a local server (i.e. not Google Cloud Platform)
+ 
+ var serviceAccount = require('../firestore-warmup-firebase-adminsdk-lsi8n-4e8856c455.json');
 
 admin.initializeApp({
-    credential: admin.credential.applicationDefault()
-}); 
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://firestore-warmup.firebaseio.com'
+});
+ 
+
+// Uncomment this block for production - I'll implement a better system for this later
+// admin.initializeApp({
+//     credential: admin.credential.applicationDefault()
+// }); 
 
 const db = admin.firestore();
 
@@ -37,11 +45,7 @@ Database.add = function(collection, key, data){
        
         const dbCollection = db.collection(collection);
 
-        let dbPromise = dbCollection.doc(data[key]).set(data).then(function(ref){
-            resolve(ref);
-        }).catch(function(err){
-            reject(Error(err));
-        });
+        let dbPromise = dbCollection.doc(data[key]).set(data);
 
         return Promise.all([dbPromise]); // Return the promise from the database operation
     
@@ -92,19 +96,24 @@ Database.update = function(collection, id, data){
  */
 Database.getAll = function(collection, limit=0){
 
-    let collectionRef = db.collection(collection);
-    let res = [];
-    collectionRef.get().then(function(snapshot){
-        let counter = 0;
+    let promise = new Promise(function(resolve, reject){
+        let collectionRef = db.collection(collection);
+        let res = [];
+        collectionRef.get().then(function(snapshot){
+            let counter = 0;
+            
+            snapshot.forEach(function(doc){
+                if(limit !== 0 && counter > limit) return;
+                res.push(doc.data());
+                counter++;
+            });
+    
+            resolve(res);
         
-        snapshot.forEach(function(doc){
-            if(limit !== 0 && counter > limit) return;
-            res.push(doc.data());
         });
     });
 
-    return res;
-
+    return promise;
 }
 
 
