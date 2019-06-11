@@ -1,0 +1,134 @@
+{
+	"info": {
+		"_postman_id": "4c2d98c4-3f48-47f5-b605-c2c7950751db",
+		"name": "Mailing List",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Add Element",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
+						"exec": [
+							"tests[\"Status code is 201\"] = responseCode.code === 201;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"ryanlydev@gmail.com\"\n}"
+				},
+				"url": {
+					"raw": "{{SERVER}}/mailinglist",
+					"host": [
+						"{{SERVER}}"
+					],
+					"path": [
+						"mailinglist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get All Elements",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "760cc802-cef3-4ef6-8bb7-427895ff901a",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{SERVER}}/mailinglist",
+					"host": [
+						"{{SERVER}}"
+					],
+					"path": [
+						"mailinglist"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Get All Elements With Limit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5f418a31-c7b4-44c7-9190-06a0dd3931f5",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"let jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Number of items returned is no more than the limit\"] = jsonData.items <= 2;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "?limit=2",
+					"query": [
+						{
+							"key": "limit",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Negative Path: Add Invalid Email",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5b6649e4-2a13-49df-af66-0ff3c4ac7400",
+						"exec": [
+							"tests[\"Status code is 400 (failed)\"] = responseCode.code === 400;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	]
+}
