@@ -14,7 +14,10 @@ Otherwise, here is a list of all the dependencies use:
 
 ## Testing
 A test server can be started on port 8080 (or, if you're using a PaaS, it'll use whichever port it assigns it) with:
+
 `npm start`
+
+Automated tested for the API endpoints is available under the `tests` folder. These tests are made and need to be run with [Postman](https://getpostman.com)
 
 
 ## Built with
