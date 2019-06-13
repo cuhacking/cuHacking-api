@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "4c2d98c4-3f48-47f5-b605-c2c7950751db",
-		"name": "Mailing List",
+		"_postman_id": "8fd20c79-21af-4455-af03-d8108ecda24d",
+		"name": "Mailing_List",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -96,7 +96,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "?limit=2",
+					"raw": "{{SERVER}}/mailinglist?limit=2",
+					"host": [
+						"{{SERVER}}"
+					],
+					"path": [
+						"mailinglist"
+					],
 					"query": [
 						{
 							"key": "limit",
@@ -125,7 +131,13 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": ""
+					"raw": "{{SERVER}}/mailinglist",
+					"host": [
+						"{{SERVER}}"
+					],
+					"path": [
+						"mailinglist"
+					]
 				}
 			},
 			"response": []
