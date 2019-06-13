@@ -15,7 +15,10 @@ const MailListController = require('../controllers/mailListController')
  * TODO: Decide format/tool for documentation of endpoints
  */
 router.get('/', MailListController.get);
+router.get('/:email', MailListController.getByEmail);
 
 router.post('/', MailListController.add);
+
+router.delete('/:email', MailListController.delete);
 
 module.exports = router;
