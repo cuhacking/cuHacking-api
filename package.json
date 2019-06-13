@@ -21,8 +21,6 @@
     "express": "^4.17.1",
     "firebase-admin": "^7.3.0",
     "jquery": "^3.4.1",
-    "mailchimp-api-v3": "^1.13.0",
-    "swagger-jsdoc": "^3.2.9",
-    "swagger-ui-express": "^4.0.6"
+    "mailchimp-api-v3": "^1.13.0"
   }
 }
