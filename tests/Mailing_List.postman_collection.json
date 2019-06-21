@@ -353,7 +353,11 @@
 							"script": {
 								"id": "5b6649e4-2a13-49df-af66-0ff3c4ac7400",
 								"exec": [
-									"tests[\"Status code is 400 (failed)\"] = responseCode.code === 400;"
+									"tests[\"Status code is 400 (failed)\"] = responseCode.code === 400;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable(\"BAD_EMAIL\", responseBody.email);"
 								],
 								"type": "text/javascript"
 							}
@@ -361,6 +365,58 @@
 					],
 					"request": {
 						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"rasdasdad@gmail\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Check that Email was not Added",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7c5aca37-991d-4695-8eb3-675e0cbdd2a8",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"let bad_email_found = false;",
+									"",
+									"for(let i = 0;i < jsonData.items;i++){",
+									"    if(jsonData.items[i].email){",
+									"        bad_email_found = true;",
+									"    }",
+									"}",
+									"",
+									"// Test result is the opposite of if the email was found",
+									"tests[\"Email was not added to database\"] = !bad_email_found;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
 						"header": [],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist",
