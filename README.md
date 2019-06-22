@@ -1,5 +1,5 @@
 # cuHacking: Application Server
-The application server is a server application which defines the REST API endpoints and functionality with will be used for interfacing between the frontend (website and mobile apps) and the backend (database, mailing list, etc.) of the platform.
+The application server is a server application which defines the REST API endpoints and functionality with will be used for interfacing between the frontend (website and mobile apps) and the backend (database, mailing list, etc.) of the platform. Learn more at our wiki page [here](https://github.com/cuhacking/cuHacking-wiki/wiki/Application-Server).
 
 ## Getting started
 This project uses node package manager (npm), wnich can be used to install all dependencies automatically:
