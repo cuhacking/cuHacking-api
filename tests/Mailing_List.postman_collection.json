@@ -1,0 +1,436 @@
+{
+	"info": {
+		"_postman_id": "8fd20c79-21af-4455-af03-d8108ecda24d",
+		"name": "Mailing_List",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Add an Element",
+			"item": [
+				{
+					"name": "1. Add Element",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable('EMAIL_ADDED', jsonData.email);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ryanlydev@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Check that the element was correctly added",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "760cc802-cef3-4ef6-8bb7-427895ff901a",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"let email_found = false;",
+									"for(let i = 0;i < jsonData.items;i++){",
+									"    if(jsonData.data[i] === environment['EMAIL_ADDED']){",
+									"        email_found = true;",
+									"    }",
+									"}",
+									"",
+									"tests[\"Email was correctly added\"] = email_found;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/{{EMAIL_ADDED}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"{{EMAIL_ADDED}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Get All Elements With Limit",
+			"item": [
+				{
+					"name": "1. Add Element (1)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable('EMAIL_ADDED1', jsonData.email);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ryanlydev+1@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Add Element (2)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable('EMAIL_ADDED2', jsonData.email);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ryanlydev+2@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Add Element (3)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
+								"exec": [
+									"tests[\"Status code is 201\"] = responseCode.code === 201;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable('EMAIL_ADDED3', jsonData.email);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ryanlydev+3@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get A Max of 2 Elements",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5f418a31-c7b4-44c7-9190-06a0dd3931f5",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"tests[\"Number of items returned is no more than the limit\"] = jsonData.items <= 2;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist?limit=2",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email (1)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/{{EMAIL_ADDED1}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"{{EMAIL_ADDED1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email (2)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/{{EMAIL_ADDED2}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"{{EMAIL_ADDED2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email (3)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/{{EMAIL_ADDED3}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"{{EMAIL_ADDED3}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Negative Path: Add Invalid Email",
+			"item": [
+				{
+					"name": "3. Negative Path: Add Invalid Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5b6649e4-2a13-49df-af66-0ff3c4ac7400",
+								"exec": [
+									"tests[\"Status code is 400 (failed)\"] = responseCode.code === 400;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable(\"BAD_EMAIL\", responseBody.email);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"rasdasdad@gmail\"\n}"
+						},
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "3. Check that Email was not Added",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7c5aca37-991d-4695-8eb3-675e0cbdd2a8",
+								"exec": [
+									"tests[\"Status code is 200\"] = responseCode.code === 200;",
+									"",
+									"let jsonData = JSON.parse(responseBody);",
+									"let bad_email_found = false;",
+									"",
+									"for(let i = 0;i < jsonData.items;i++){",
+									"    if(jsonData.items[i].email){",
+									"        bad_email_found = true;",
+									"    }",
+									"}",
+									"",
+									"// Test result is the opposite of if the email was found",
+									"tests[\"Email was not added to database\"] = !bad_email_found;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
