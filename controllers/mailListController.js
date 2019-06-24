@@ -1,6 +1,7 @@
 const COLLECTION_NAME = 'mailing_list';
 
 const Database  = require('../model/database');
+const MailChimp = require('../model/mail');
 const MailListController = module.exports;
 
 MailListController.get = function(req, res){
@@ -53,11 +54,30 @@ MailListController.add = function(req, res){
 
         Database.add(COLLECTION_NAME, 'email', data).then(function(ref){
             if(ref){
-                res.status(201).send({
-                    email: email,
-                    operation: 'add',
-                    status: 'success',
-                    message: 'Email successfully added to mailing list'
+                Mail.subscribe("MailingList", email).then(function(mailchimpRes){
+                    res.status(201).send({
+                        email: email,
+                        operation: 'add',
+                        status: 'success',
+                        message: 'Email successfully added to mailing list'
+                    });
+                }, function(error){
+                    // Subscribe to Mailchimp failed. Remove from database to prevent data mismatch
+                    Database.remove(COLLECTION_NAME, email).then(function(removeRes){
+                        res.status(500).send({
+                            email: email,
+                            operation: 'add',
+                            status: 'failed',
+                            message: 'Subscribing to Mailchimp failed. Email also removed from database.'
+                        });
+                    }, function(error){
+                        res.status(500).send({
+                            email: email,
+                            operation: 'add',
+                            status: 'failed',
+                            message: 'Subscribing to Mailchimp failed. Remove email from database FAILED. CRITICAL: Data mismatch may have occured.'
+                        });
+                    });
                 });
             } else {
                 res.status(500).send({
