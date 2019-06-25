@@ -31,16 +31,26 @@ Mail.createList = function(name){
         let list_settings = {
             "name": name,
             "contact":  {
-                
+                "company":  "cuHacking",
+                "address1": "address",
+                "city":     "Ottawa",
+                "state":    "Ontario",
+                "zip":      "zip",
+                "country":  "Canada"
             },
             "permission_reminder": "You're receiving this email because you signed up for cuHacking 2020's mailing list.",
             "campaign_defaults":{
-
+                "from_name":    "cuHacking",
+                "from_email":   "noreply@cuhacking.com",
+                "subject":      "cuHacking",
+                "language":     "English"
             },
             "email_type_option": false
         };
         mailchimp.post('/lists', list_settings).then(function(res){
-            resolve(res); //TODO: Check the response for errors and reject the promise
+            resolve(res); 
+        }, function(error){
+            reject(error);
         });
     });
 
@@ -76,7 +86,7 @@ Mail.getList = function(name){
 /**
  * Subscribe a user to a mailing list
  * 
- * @param {string}      list    - The name of the list to add the email to
+ * @param {string}      list    - The name of the list to add the email to. Creates list if it does not exist
  * @param {string}      email   - The email to add to the mailing list
  * 
  * @return {Promise}            - Promise returns the response from the add operation
@@ -84,18 +94,36 @@ Mail.getList = function(name){
 Mail.subscribe = function(list, email){
     
     let promise = new Promise(function(resolve, reject){
-        let list_id = Mail.getList(list).id;
+        Mail.getList(list).then(function(res_list){
+            if(res_list.id){
 
-        if(list_id){
-            mailchimp.post('/lists/' + list_id + '/members', {
-                "email_address": email,
-                "status": "subscribed"
-            }).then(function(res){
-               resolve(res); 
-            });
-        } else {
-            reject("List was not found");
-        }
+                mailchimp.post('/lists/' + res_list.id + '/members', {
+                    "email_address": email,
+                    "status": "subscribed"
+                }).then(function(res){
+                   resolve(res); 
+                });
+
+            } else {
+                
+                // If the list does not exist, create it and use it
+                Mail.createList(list).then(function(create_res){
+                    if(create_res.id){
+                        mailchimp.post('/lists/' + create_res.id + '/members', {
+                            "email_address": email,
+                            "status": "subscribed"
+                        }).then(function(res){
+                           resolve(res); 
+                        });
+                    }
+                }, function(create_error){
+                    reject("Error creating list");
+                });
+
+            }
+        }, function(error){
+            reject("Getting list failed");
+        });
     });
 
     return promise;

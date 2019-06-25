@@ -14,11 +14,11 @@
  
  // Uncomment this block and add credentials if running on a local server (i.e. not Google Cloud Platform)
  
- var serviceAccount = require('../firestore-warmup-firebase-adminsdk-lsi8n-4e8856c455.json');
+ var serviceAccount = require();
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://cuhacking-243712.firebaseio.com'
+    databaseURL: ''
 });
  
 
