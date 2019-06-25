@@ -10,15 +10,15 @@
 /**
  * Imports and Setup
  */
- const admin = require('firebase-admin');
- 
+ const admin    = require('firebase-admin');
+ const config   = require('../config.json'); 
  // Uncomment this block and add credentials if running on a local server (i.e. not Google Cloud Platform)
  
- var serviceAccount = require();
+ var serviceAccount = require(config.firebase_key_file);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: ''
+    databaseURL: config.firebase_url
 });
  
 

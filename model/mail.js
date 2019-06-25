@@ -10,8 +10,10 @@
  /**
  * Imports and Setup
  */
+const config = require('../config.json');
+
 const Mailchimp = require('mailchimp-api-v3');
-const mailchimp = new Mailchimp('API-KEY-HERE');
+const mailchimp = new Mailchimp(config.mailchimp_api_key);
 const crypto = require('crypto');
 
 var Mail = module.exports;
