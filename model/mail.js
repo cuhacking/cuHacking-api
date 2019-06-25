@@ -72,6 +72,7 @@ Mail.getList = function(name){
     let promise = new Promise(function(resolve, reject){
         mailchimp.get('/lists').then(function(res){
             for(let list of res.lists){
+                console.log(list.name);
                 if(list.name === name){
                     resolve(list);
                 }
@@ -97,34 +98,35 @@ Mail.subscribe = function(list, email){
     
     let promise = new Promise(function(resolve, reject){
         Mail.getList(list).then(function(res_list){
-            if(res_list.id){
 
-                mailchimp.post('/lists/' + res_list.id + '/members', {
-                    "email_address": email,
-                    "status": "subscribed"
-                }).then(function(res){
-                   resolve(res); 
-                });
+            mailchimp.post('/lists/' + res_list.id + '/members', {
+                "email_address": email,
+                "status": "subscribed"
+            }).then(function(res){
+                resolve(res); 
+            }, function(error){
+                reject(error);
+            });
 
-            } else {
-                
-                // If the list does not exist, create it and use it
-                Mail.createList(list).then(function(create_res){
-                    if(create_res.id){
-                        mailchimp.post('/lists/' + create_res.id + '/members', {
-                            "email_address": email,
-                            "status": "subscribed"
-                        }).then(function(res){
-                           resolve(res); 
-                        });
-                    }
-                }, function(create_error){
-                    reject("Error creating list");
-                });
-
-            }
         }, function(error){
-            reject("Getting list failed");
+
+            // If the list does not exist, create it and use it
+            Mail.createList(list).then(function(create_res){
+                if(create_res.id){
+                    mailchimp.post('/lists/' + create_res.id + '/members', {
+                        "email_address": email,
+                        "status": "subscribed"
+                    }).then(function(res){
+                       resolve(res); 
+                    });
+                } else {
+                    console.log(create_res);
+                    reject("List was created, but id was not found");
+                }
+            }, function(create_error){
+                reject("Error creating list. Reason: " + create_error);
+            });
+
         });
     });
 

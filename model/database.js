@@ -14,7 +14,7 @@
  const config   = require('../config.json'); 
  // Uncomment this block and add credentials if running on a local server (i.e. not Google Cloud Platform)
  
- var serviceAccount = require(config.firebase_key_file);
+ var serviceAccount = require('../' + config.firebase_key_file);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),

@@ -1,7 +1,7 @@
 const COLLECTION_NAME = 'mailing_list';
 
 const Database  = require('../model/database');
-const MailChimp = require('../model/mail');
+const Mail = require('../model/mail');
 const MailListController = module.exports;
 
 MailListController.get = function(req, res){
@@ -54,6 +54,9 @@ MailListController.add = function(req, res){
 
         Database.add(COLLECTION_NAME, 'email', data).then(function(ref){
             if(ref){
+
+                console.log("Adding to mailchimp...");
+                // Add to database succeeded, now add to Mailchimp
                 Mail.subscribe("MailingList", email).then(function(mailchimpRes){
                     res.status(201).send({
                         email: email,
@@ -68,7 +71,7 @@ MailListController.add = function(req, res){
                             email: email,
                             operation: 'add',
                             status: 'failed',
-                            message: 'Subscribing to Mailchimp failed. Email also removed from database.'
+                            message: 'Subscribing to Mailchimp failed. Email also removed from database. Reason: ' + error
                         });
                     }, function(error){
                         res.status(500).send({
