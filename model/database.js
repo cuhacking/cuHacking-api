@@ -18,7 +18,7 @@
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://firestore-warmup.firebaseio.com'
+    databaseURL: 'https://cuhacking-243712.firebaseio.com'
 });
  
 
