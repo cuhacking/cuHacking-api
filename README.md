@@ -2,9 +2,9 @@
 The application server is a server application which defines the REST API endpoints and functionality with will be used for interfacing between the frontend (website and mobile apps) and the backend (database, mailing list, etc.) of the platform. Learn more at our wiki page [here](https://github.com/cuhacking/cuHacking-wiki/wiki/Application-Server).
 
 ## Getting started
-This project uses node package manager (npm), wnich can be used to install all dependencies automatically:
+This project uses yarn, wnich can be used to install all dependencies automatically:
 
-`npm install`
+`yarn install`
 
 Otherwise, here is a list of all the dependencies use:
 * [Express](https://expressjs.com/)
@@ -15,9 +15,9 @@ Otherwise, here is a list of all the dependencies use:
 ## Testing
 A test server can be started on port 8080 (or, if you're using a PaaS, it'll use whichever port it assigns it) with:
 
-`npm start`
+`yarn start`
 
-Automated tests for the API endpoints is available under the `tests` folder. These tests are made and need to be run with [Postman](https://getpostman.com)
+Automated tests for the API endpoints is available under the `tests` folder. These tests are made and need to be run with [Postman](https://github.com/cuhacking/cuHacking-wiki/wiki/Postman)
 
 
 ## Built with
