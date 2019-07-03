@@ -87,6 +87,34 @@ Mail.getList = function(name){
 
 
 /**
+ * Get a specific user from Mailchimp. Used mostly for checking if the user exists
+ * 
+ * @param {string}      list    - The name of the list to get the user from
+ * @param {string}      email   - The email of the user to get
+ * 
+ * @return {Promise}            - Promise returns the response from the Mailchimp get request
+ */
+Mail.getUser = function(list, email){
+
+    let promise = new Promise(function(resolve, reject){
+        Mail.getList(list).then(function(res_list){
+
+            mailchimp.get('/lists/' + res_list.id + '/members/' + crypto.createHash('md5').update(email).digest("hex")).then(function(res){
+                resolve(res)
+            }, function(error){
+                reject(error);
+            });
+
+        }, function(error){
+            reject(error);
+        });
+        
+    });
+
+    return promise;
+}
+
+/**
  * Subscribe a user to a mailing list
  * 
  * @param {string}      list    - The name of the list to add the email to. Creates list if it does not exist

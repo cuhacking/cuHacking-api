@@ -1,8 +1,9 @@
-const COLLECTION_NAME = 'mailing_list';
-
 const Database  = require('../model/database');
 const Mail = require('../model/mail');
 const MailListController = module.exports;
+
+const COLLECTION_NAME = 'mailing_list';
+const MAILING_LIST = 'MailingList';
 
 MailListController.get = function(req, res){
     
@@ -57,7 +58,7 @@ MailListController.add = function(req, res){
 
                 console.log("Adding to mailchimp...");
                 // Add to database succeeded, now add to Mailchimp
-                Mail.subscribe("MailingList", email).then(function(mailchimpRes){
+                Mail.subscribe(MAILING_LIST, email).then(function(mailchimpRes){
                     res.status(201).send({
                         email: email,
                         operation: 'add',
@@ -125,6 +126,30 @@ MailListController.delete = function(req, res){
         });
     }
 
+}
+
+
+MailListController.getMailchimp = function(req, res){
+
+    let email = req.email;
+    let get_res = Mail.getUser(MAILING_LIST, email).then(function(user){
+        res.status(200).send({
+            email: email,
+            operation: 'get',
+            status: 'success',
+            result: user
+        });
+    }).catch(function(error){
+        if(error.status === 404){
+            res.status(404).send({
+                email: email,
+                operation: 'get',
+                status: 'failed',
+                message: 'User not found in Mailchimp'
+            })
+        }
+    });
+    
 }
 
 

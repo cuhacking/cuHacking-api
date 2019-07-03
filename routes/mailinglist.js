@@ -16,6 +16,7 @@ const MailListController = require('../controllers/mailListController')
  */
 router.get('/', MailListController.get);
 router.get('/:email', MailListController.getByEmail);
+router.get('/mailchimp', MailListController.getMailchimp);
 
 router.post('/', MailListController.add);
 
