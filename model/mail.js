@@ -22,9 +22,9 @@ var Mail = module.exports;
 /**
  * Create a new mailing list
  * 
- * @param {string}      name - The name of the list to create
+ * @param {string} name     - The name of the list to create
  * 
- * @return {Promise}         - Promise returns the result of the create operation
+ * @return {Promise}        - Promise returns the result of the create operation
  */
 Mail.createList = function(name){
 
@@ -61,11 +61,65 @@ Mail.createList = function(name){
 
 
 /**
+ * Get a group in the specified mailing list
+ * 
+ * @param {string} list         - the name of the list which contains the group
+ * @param {string} groupName    - the name of the group to get
+ * 
+ * @return {Promise}            - a Promise returning the result of GET operation on the group
+ */
+Mail.getGroup = function(list, groupName){
+
+    let promise = new Promise(function(resolve, reject){
+
+        Mail.getList(list).then(function(res){
+            return mailchimp.get('/lists/' + res.id + '/interest-categories');
+        }).then(function(groupRes){
+            resolve(groupRes);
+        }).catch(function(err){
+            reject(err);
+        });
+
+    });
+
+    return promise;
+
+}
+
+
+/**
+ * Get a group in the specified mailing list
+ * 
+ * @param {string} list         - the name of the list to which to add the group
+ * @param {string} groupName    - the name of the group to create
+ * 
+ * @return {Promise}            - a Promise returning the result of POST operation on the group
+ */
+Mail.createGroup = function(list, groupName){
+
+    let promise = new Promise(function(resolve, reject){
+
+        Mail.getList(list).then(function(res){
+            return mailchimp.post('/lists/' + res.id + '/interest-categories');
+        }).then(function(res){
+            resolve(res);
+        }).catch(function(err){
+            reject(err);
+        });
+
+    });
+
+    return promise;
+
+}
+
+
+/**
  * Get a specific list from Mailchimp
  * 
- * @param {string}      name - The name of the list to get
+ * @param {string} name     - The name of the list to get
  * 
- * @return {Promise}         - Promise returns the list object received from Mailchimp
+ * @return {Promise}        - Promise returns the list object received from Mailchimp
  */
 Mail.getList = function(name){
 
@@ -89,10 +143,10 @@ Mail.getList = function(name){
 /**
  * Get a specific user from Mailchimp. Used mostly for checking if the user exists
  * 
- * @param {string}      list    - The name of the list to get the user from
- * @param {string}      email   - The email of the user to get
+ * @param {string} list     - The name of the list to get the user from
+ * @param {string} email    - The email of the user to get
  * 
- * @return {Promise}            - Promise returns the response from the Mailchimp get request
+ * @return {Promise}        - Promise returns the response from the Mailchimp get request
  */
 Mail.getUser = function(list, email){
 
@@ -117,45 +171,35 @@ Mail.getUser = function(list, email){
 /**
  * Subscribe a user to a mailing list
  * 
- * @param {string}      list    - The name of the list to add the email to. Creates list if it does not exist
- * @param {string}      email   - The email to add to the mailing list
+ * @param {string} list         - The name of the list to add the email to. Creates list if it does not exist
+ * @param {string} group        - The name of the group to add the email to
+ * @param {string} email        - The email to add to the mailing list
  * 
  * @return {Promise}            - Promise returns the response from the add operation
  */
-Mail.subscribe = function(list, email){
+Mail.subscribe = function(list, group, email){
     
     let promise = new Promise(function(resolve, reject){
-        Mail.getList(list).then(function(res_list){
 
-            mailchimp.post('/lists/' + res_list.id + '/members', {
+        Mail.getGroup(list, group).then(function(groupRes){
+            // This uses Promise.all as a way of passing a variable down the promise chain
+            return Promise.all([Mail.getList(list), groupRes]);
+        }).then(function([resList, groupRes]){
+
+            let interests = {}
+            interests[groupRes] = true;
+
+            return mailchimp.post('/lists/' + res_list.id + '/members', {
                 "email_address": email,
-                "status": "subscribed"
-            }).then(function(res){
-                resolve(res); 
-            }, function(error){
-                reject(error);
+                "status": "subscribed",
+                "interests": interests
             });
-
-        }, function(error){
-
-            // If the list does not exist, create it and use it
-            Mail.createList(list).then(function(create_res){
-                if(create_res.id){
-                    mailchimp.post('/lists/' + create_res.id + '/members', {
-                        "email_address": email,
-                        "status": "subscribed"
-                    }).then(function(res){
-                       resolve(res); 
-                    });
-                } else {
-                    console.log(create_res);
-                    reject("List was created, but id was not found");
-                }
-            }, function(create_error){
-                reject("Error creating list. Reason: " + create_error);
-            });
-
+        }).then(function(res){
+            resolve(res);
+        }).catch(function(err){
+            reject(err);
         });
+
     });
 
     return promise;

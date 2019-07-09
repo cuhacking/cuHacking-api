@@ -47,6 +47,7 @@ MailListController.getByEmail = function(req, res){
 MailListController.add = function(req, res){
 
     let email = req.body.email;
+    let mailchimpGroup = req.body.group;
 
     if(validateEmail(email)){
         let data = {
@@ -58,7 +59,7 @@ MailListController.add = function(req, res){
 
                 console.log("Adding to mailchimp...");
                 // Add to database succeeded, now add to Mailchimp
-                Mail.subscribe(MAILING_LIST, email).then(function(mailchimpRes){
+                Mail.subscribe(MAILING_LIST, mailchimpGroup, email).then(function(mailchimpRes){
                     res.status(201).send({
                         email: email,
                         operation: 'add',
