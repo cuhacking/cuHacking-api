@@ -13,7 +13,7 @@
 const config = require('../config.json');
 
 const Mailchimp = require('mailchimp-api-v3');
-const mailchimp = new Mailchimp(config.mailchimp_api_key);
+const mailchimp = new Mailchimp(config[process.env.NODE_ENV].mailchimp_api_key);
 const crypto = require('crypto');
 
 var Mail = module.exports;
@@ -75,7 +75,24 @@ Mail.getGroup = function(list, groupName){
         Mail.getList(list).then(function(res){
             return mailchimp.get('/lists/' + res.id + '/interest-categories');
         }).then(function(groupRes){
-            resolve(groupRes);
+            let categoryId = '';
+
+            for(let g of groupRes.categories){
+                if(g.title === groupName){
+                    categoryId = g.id;
+                }
+            }
+
+            return mailchimp.get('/lists/' + groupRes.list_id + '/interest-categories/' + categoryId + '/interests');
+        }).then(function(res){
+
+            for(let interest of res.interests){
+                if(interest.name === groupName){
+                    resolve(interest);
+                }
+            }
+
+            reject("Group " + groupName + " not found.");
         }).catch(function(err){
             reject(err);
         });
@@ -100,7 +117,10 @@ Mail.createGroup = function(list, groupName){
     let promise = new Promise(function(resolve, reject){
 
         Mail.getList(list).then(function(res){
-            return mailchimp.post('/lists/' + res.id + '/interest-categories');
+            return mailchimp.post('/lists/' + res.id + '/interest-categories', {
+                "title": groupName,
+                "type": "hidden"
+            });
         }).then(function(res){
             resolve(res);
         }).catch(function(err){
@@ -126,7 +146,6 @@ Mail.getList = function(name){
     let promise = new Promise(function(resolve, reject){
         mailchimp.get('/lists').then(function(res){
             for(let list of res.lists){
-                console.log(list.name);
                 if(list.name === name){
                     resolve(list);
                 }
@@ -141,6 +160,26 @@ Mail.getList = function(name){
 
 
 /**
+ * Get a all users from Mailchimp.
+ * 
+ * @param {string} list     - The name of the list to get the user from
+ * 
+ * @return {Promise}        - Promise returns the response from the Mailchimp get request
+ */
+Mail.get = function(list){
+
+    let promise = new Promise(function(resolve, reject){
+        Mail.getList(list).then(function(resList){
+            mailchimp.get('/lists/' + resList.id + '/members');
+        })
+    });
+
+    return promise;
+
+}
+
+
+/**
  * Get a specific user from Mailchimp. Used mostly for checking if the user exists
  * 
  * @param {string} list     - The name of the list to get the user from
@@ -151,16 +190,16 @@ Mail.getList = function(name){
 Mail.getUser = function(list, email){
 
     let promise = new Promise(function(resolve, reject){
-        Mail.getList(list).then(function(res_list){
+        Mail.getList(list).then(function(resList){
 
-            mailchimp.get('/lists/' + res_list.id + '/members/' + crypto.createHash('md5').update(email).digest("hex")).then(function(res){
+            mailchimp.get('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest("hex")).then(function(res){
                 resolve(res)
             }, function(error){
-                reject(error);
+                reject(Error(error));
             });
 
         }, function(error){
-            reject(error);
+            reject(Error(error));
         });
         
     });
@@ -185,19 +224,18 @@ Mail.subscribe = function(list, group, email){
             // This uses Promise.all as a way of passing a variable down the promise chain
             return Promise.all([Mail.getList(list), groupRes]);
         }).then(function([resList, groupRes]){
+            let interests = {};
+            interests[groupRes.id] = true;
 
-            let interests = {}
-            interests[groupRes] = true;
-
-            return mailchimp.post('/lists/' + res_list.id + '/members', {
+            return mailchimp.post('/lists/' + resList.id + '/members', {
                 "email_address": email,
                 "status": "subscribed",
                 "interests": interests
             });
         }).then(function(res){
-            resolve(res);
+           resolve(res); 
         }).catch(function(err){
-            reject(err);
+            reject(Error(err));
         });
 
     });

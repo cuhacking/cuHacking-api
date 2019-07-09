@@ -133,7 +133,7 @@ MailListController.delete = function(req, res){
 MailListController.getMailchimp = function(req, res){
 
     let email = req.email;
-    let get_res = Mail.getUser(MAILING_LIST, email).then(function(user){
+    Mail.getUser(MAILING_LIST, email).then(function(user){
         res.status(200).send({
             email: email,
             operation: 'get',

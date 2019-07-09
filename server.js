@@ -19,5 +19,5 @@ app.all('*', function(req, res){
 
 // Start the server
 app.listen(PORT, function(){
-    console.log('Application server listening on port ' + PORT);
+    console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode");
 });
