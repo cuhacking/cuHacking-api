@@ -1,6 +1,6 @@
 {
   "name": "application-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Application server for cuHacking",
   "main": "server.js",
   "scripts": {
