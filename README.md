@@ -17,14 +17,25 @@ Before you get started, you'll have to create a file called `config.json` in you
 
 ```
 {
-    "firebase_url": "THE URL TO YOUR FIREBASE DATABASE",
-    "firebase_key_file": "THE PATH TO YOUR FIREBASE AUTHENTICATION JSON FILE, RELATIVE TO THE ROOT",
-    "mailchimp_api_key": "YOUR MAILCHIMP API KEY"
+    "production": {
+        "firebase_url": "THE URL TO YOUR PROD FIREBASE DATABASE",
+        "firebase_key_file": "THE PATH TO YOUR FIREBASE AUTHENTICATION JSON FILE, RELATIVE TO THE ROOT",
+        "mailchimp_api_key": "YOUR MAILCHIMP API KEY"
+    },
+    "development": {
+        "firebase_url": "THE URL TO YOUR TEST FIREBASE DATABASE",
+        "firebase_key_file": "THE PATH TO YOUR FIREBASE AUTHENTICATION JSON FILE, RELATIVE TO THE ROOT",
+        "mailchimp_api_key": "YOUR MAILCHIMP API KEY"
+    }
 }
 ```
 
-## Testing
+## Running
 A test server can be started on port 8080 (or, if you're using a PaaS, it'll use whichever port it gets assigned) with:
+
+`yarn test`
+
+To start for production (this tells Express to optimize for production and uses your production config settings):
 
 `yarn start`
 
