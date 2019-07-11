@@ -52,7 +52,7 @@ Mail.createList = function(name){
         mailchimp.post('/lists', list_settings).then(function(res){
             resolve(res); 
         }, function(error){
-            reject(error);
+            reject(Error(error));
         });
     });
 
@@ -92,9 +92,9 @@ Mail.getGroup = function(list, groupName){
                 }
             }
 
-            reject("Group " + groupName + " not found.");
+            reject(Error("Group " + groupName + " not found."));
         }).catch(function(err){
-            reject(err);
+            reject(Error(err));
         });
 
     });
@@ -124,7 +124,7 @@ Mail.createGroup = function(list, groupName){
         }).then(function(res){
             resolve(res);
         }).catch(function(err){
-            reject(err);
+            reject(Error(err));
         });
 
     });
@@ -151,33 +151,12 @@ Mail.getList = function(name){
                 }
             }
 
-            reject("List was not found");
+            reject(Error("List was not found"));
         });
     });
 
     return promise;
 }
-
-
-/**
- * Get a all users from Mailchimp.
- * 
- * @param {string} list     - The name of the list to get the user from
- * 
- * @return {Promise}        - Promise returns the response from the Mailchimp get request
- */
-Mail.get = function(list){
-
-    let promise = new Promise(function(resolve, reject){
-        Mail.getList(list).then(function(resList){
-            mailchimp.get('/lists/' + resList.id + '/members');
-        })
-    });
-
-    return promise;
-
-}
-
 
 /**
  * Get a specific user from Mailchimp. Used mostly for checking if the user exists

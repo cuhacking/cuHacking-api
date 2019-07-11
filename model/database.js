@@ -21,12 +21,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: config[env].firebase_url
 });
- 
-
-// Uncomment this block for production - I'll implement a better system for this later
-// admin.initializeApp({
-//     credential: admin.credential.applicationDefault()
-// }); 
 
 const db = admin.firestore();
 
@@ -111,6 +105,8 @@ Database.getAll = function(collection, limit=0){
     
             resolve(res);
         
+        }).catch(function(err){
+            reject(Error(err));
         });
     });
 
@@ -136,6 +132,8 @@ Database.get = function(collection, id){
         } else {
             return doc.data();
         }
+    }).catch(function(err){
+        return undefined;
     });
     
     return undefined;
@@ -165,6 +163,8 @@ Database.getWithQuery = function(collection, limit=0){
             if(limit !== 0 && counter > limit) return;
             res.push(doc.data());
         });
+    }).catch(function(err){
+        return undefined;
     });
 
     return res;
