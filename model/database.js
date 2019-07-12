@@ -10,22 +10,17 @@
 /**
  * Imports and Setup
  */
- const admin = require('firebase-admin');
- 
- // Uncomment this block and add credentials if running on a local server (i.e. not Google Cloud Platform)
- 
- var serviceAccount = require('../firestore-warmup-firebase-adminsdk-lsi8n-4e8856c455.json');
+const admin    = require('firebase-admin');
+const config   = require('../config.json');  
+
+const env = process.env.NODE_ENV || "development";
+
+var serviceAccount = require('../' + config[env].firebase_key_file);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://firestore-warmup.firebaseio.com'
+    databaseURL: config[env].firebase_url
 });
- 
-
-// Uncomment this block for production - I'll implement a better system for this later
-// admin.initializeApp({
-//     credential: admin.credential.applicationDefault()
-// }); 
 
 const db = admin.firestore();
 
@@ -110,6 +105,8 @@ Database.getAll = function(collection, limit=0){
     
             resolve(res);
         
+        }).catch(function(err){
+            reject(Error(err));
         });
     });
 
@@ -135,6 +132,8 @@ Database.get = function(collection, id){
         } else {
             return doc.data();
         }
+    }).catch(function(err){
+        return undefined;
     });
     
     return undefined;
@@ -164,6 +163,8 @@ Database.getWithQuery = function(collection, limit=0){
             if(limit !== 0 && counter > limit) return;
             res.push(doc.data());
         });
+    }).catch(function(err){
+        return undefined;
     });
 
     return res;

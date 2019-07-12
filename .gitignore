@@ -1,2 +1,5 @@
 node_modules/
 *-firebase-adminsdk-*.json
+config.json
+*.log
+firestore-*.json
