@@ -124,19 +124,20 @@ Database.getAll = function(collection, limit=0){
  */
 Database.get = function(collection, id){
 
-    let collectionRef = db.collection(collection);
-    let doc = collectionRef.get().then(function(doc){
-        if(!doc.exists){
-            console.log("Database get by id: document with id " + id + " in collection " + collection + " not found!");
-            return undefined;
-        } else {
-            return doc.data();
-        }
-    }).catch(function(err){
-        return undefined;
+    let promise = new Promise(function(resolve, reject){
+        let collectionRef = db.collection(collection).doc(id);
+        collectionRef.get().then(function(doc){
+            if(!doc.exists){
+                reject(Error("Database get by id: document with id " + id + " in collection " + collection + " not found!"));
+            } else {
+                resolve(doc.data());
+            }
+        }).catch(function(err){
+            reject(err);
+        });
     });
-    
-    return undefined;
+
+    return promise;
 
 }
 
@@ -156,7 +157,7 @@ Database.getWithQuery = function(collection, limit=0){
 
     let collectionRef = db.collection(collection);
     let res = [];
-    collectionRef.get().where(attribute, comparison, value).then(function(snapshot){
+    collectionRef.where(attribute, comparison, value).then(function(snapshot){
         let counter = 0;
         
         snapshot.forEach(function(doc){
@@ -168,5 +169,31 @@ Database.getWithQuery = function(collection, limit=0){
     });
 
     return res;
+
+}
+
+
+Database.search = function(collection, field, value){
+
+    let promise = new Promise(function(resolve, reject){
+
+        let collectionRef = db.collection(collection);
+
+        collectionRef.where(field, '==', value).get().then(function(snapshot){
+
+            if(snapshot.empty){
+                reject(Error("Value does not exist in collection: " + collection));
+            }
+            
+            snapshot.forEach(function(doc){
+                resolve(doc.data());
+            });
+
+        }).catch(function(err){
+            reject(Error(err));
+        });
+    });
+
+    return promise;
 
 }

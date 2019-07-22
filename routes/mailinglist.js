@@ -1,6 +1,5 @@
 const express   = require('express');
 const router    = express.Router();
-const Database  = require('../model/database');
 
 const MailListController = require('../controllers/mailListController')
 
