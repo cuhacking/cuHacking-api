@@ -209,7 +209,8 @@ Mail.subscribe = function(list, group, email){
             return mailchimp.post('/lists/' + resList.id + '/members', {
                 "email_address": email,
                 "status": "subscribed",
-                "interests": interests
+                "interests": interests,
+                "tags": ["2020"],
             });
         }).then(function(res){
            resolve(res); 
