@@ -21,5 +21,6 @@ router.get('/db/:email', MailListController.getByEmail);
 router.post('/subscribe', MailListController.add);
 
 router.delete('/db/:email', MailListController.delete);
+router.delete('/mailchimp/:email', MailListController.deleteMailchimp);
 
 module.exports = router;

@@ -52,6 +52,7 @@ passport.deserializeUser(function(id, cb) {
 });
 
 app.use(passport.authenticate('bearer'), function(req, res, next){
+    console.log(req.originalUrl);
     next();
 });
 

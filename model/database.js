@@ -133,7 +133,7 @@ Database.get = function(collection, id){
                 resolve(doc.data());
             }
         }).catch(function(err){
-            reject(err);
+            reject(Error(err));
         });
     });
 

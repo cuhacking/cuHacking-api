@@ -199,19 +199,36 @@ Mail.subscribe = function(list, group, email){
     
     let promise = new Promise(function(resolve, reject){
 
-        Mail.getGroup(list, group).then(function(groupRes){
-            // This uses Promise.all as a way of passing a variable down the promise chain
-            return Promise.all([Mail.getList(list), groupRes]);
-        }).then(function([resList, groupRes]){
-            let interests = {};
-            interests[groupRes.id] = true;
+        // Mail.getGroup(list, group).then(function(groupRes){
+        //     // This uses Promise.all as a way of passing a variable down the promise chain
+        //     return Promise.all([Mail.getList(list), groupRes]);
+        // }).then(function([resList, groupRes]){
+        //     let interests = {};
+        //     interests[groupRes.id] = true;
+        //     return mailchimp.put('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex'), {
+        //         "email_address": email,
+        //         "status": "subscribed",
+        //         "interests": interests,
+        //         "tags": ["2020"],
+        //     });
+        // }).then(function(res){
+        //    resolve(res); 
+        // }).catch(function(err){
+        //     reject(Error(err));
+        // });
 
-            return mailchimp.post('/lists/' + resList.id + '/members', {
+        Mail.getList(list).then(function(resList){
+            return Promise.all([mailchimp.put('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex'), {
                 "email_address": email,
-                "status": "subscribed",
-                "interests": interests,
-                "tags": ["2020"],
-            });
+                "status": "subscribed"
+            }), resList]);
+        }).then(function([addRes, resList]){
+            return mailchimp.post('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex') + '/tags', {
+                "tags": [{
+                    "name": "2020",
+                    "status": "active"
+                }]
+            })
         }).then(function(res){
            resolve(res); 
         }).catch(function(err){
@@ -221,4 +238,22 @@ Mail.subscribe = function(list, group, email){
     });
 
     return promise;
+}
+
+Mail.unsubscribe = function(list, email){
+
+    let promise = new Promise(function(resolve, reject){
+        
+        Mail.getList(list).then(function(listRes){
+            return mailchimp.delete('/lists/' + listRes.id + '/members/' + crypto.createHash('md5').update(email).digest('hex'));
+        }).then(function(res){
+            resolve(res);
+        }).catch(function(err){
+            reject(Error(err));
+        });
+
+    });
+
+    return promise;
+
 }

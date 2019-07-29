@@ -17,13 +17,15 @@ MailListController.get = function(req, res){
         };
     
         res.status(200).send(data);
+    }).catch(function(err){
+        res.status(500).send(err);
     });
 
 }
 
 MailListController.getByEmail = function(req, res){
     
-    let email = req.email;
+    let email = req.params.email;
     Database.get(COLLECTION_NAME, email).then(function(databaseResult){
         if(databaseResult){
             res.status(200).send({
@@ -40,6 +42,8 @@ MailListController.getByEmail = function(req, res){
                 message: 'Email not found'
             });
         }
+    }).catch(function(err){
+        res.status(500).send(err);
     });
 
 }
@@ -106,7 +110,7 @@ MailListController.add = function(req, res){
 
 MailListController.delete = function(req, res){
 
-    let email = req.email;
+    let email = req.params.email;
     let doc = Database.get(COLLECTION_NAME, email);
 
     if(!doc){
@@ -132,7 +136,7 @@ MailListController.delete = function(req, res){
 
 MailListController.getMailchimp = function(req, res){
 
-    let email = req.email;
+    let email = req.params.email;
     Mail.getUser(MAILING_LIST, email).then(function(user){
         res.status(200).send({
             email: email,
@@ -151,6 +155,37 @@ MailListController.getMailchimp = function(req, res){
         }
     });
     
+}
+
+
+MailListController.deleteMailchimp = function(req, res){
+
+    let email = req.params.email;
+    Mail.unsubscribe(MAILING_LIST, email).then(function(user){
+        res.status(204).send({
+            email: email,
+            operation: 'delete',
+            status: 'success',
+            message: 'Email successfully deleted' 
+        });
+    }).catch(function(error){
+        if(error.status === 404){
+            res.status(400).send({
+                email: email,
+                operation: 'get',
+                status: 'failed',
+                message: 'User not found in Mailchimp'
+            });
+        } else {
+            res.status(500).send({
+                email: email,
+                operation: 'delete',
+                status: 'failed',
+                message: 'delete failed for unknown reason'
+            })
+        }
+    });
+
 }
 
 

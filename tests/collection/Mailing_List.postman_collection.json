@@ -52,7 +52,7 @@
 							"script": {
 								"id": "97fe9384-c6cb-404f-8d41-055b25294c15",
 								"exec": [
-									"tests[\"Access was properly denied (401).\"] = responseCode.code === 401;"
+									"tests[\"Access was properly denied (Response is 401).\"] = responseCode.code === 401;"
 								],
 								"type": "text/javascript"
 							}
@@ -104,6 +104,11 @@
 								"name": "Content-Type",
 								"type": "text",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -118,6 +123,12 @@
 							"path": [
 								"mailinglist",
 								"subscribe"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -136,10 +147,8 @@
 									"let jsonData = JSON.parse(responseBody);",
 									"",
 									"let email_found = false;",
-									"for(let i = 0;i < jsonData.items;i++){",
-									"    if(jsonData.data[i] === environment['EMAIL_ADDED']){",
-									"        email_found = true;",
-									"    }",
+									"if(jsonData.data.email === environment['EMAIL_ADDED']){",
+									"    email_found = true;",
 									"}",
 									"",
 									"tests[\"Email was correctly added\"] = email_found;"
@@ -150,7 +159,13 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED}}",
 							"host": [
@@ -178,10 +193,8 @@
 									"let jsonData = JSON.parse(responseBody);",
 									"",
 									"let email_found = false;",
-									"for(let i = 0;i < jsonData.items;i++){",
-									"    if(jsonData.data[i] === environment['EMAIL_ADDED']){",
-									"        email_found = true;",
-									"    }",
+									"if(jsonData.email === environment['EMAIL_ADDED']){",
+									"    email_found = true;",
 									"}",
 									"",
 									"tests[\"Email was correctly added\"] = email_found;"
@@ -192,7 +205,13 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED}}",
 							"host": [
@@ -209,9 +228,27 @@
 				},
 				{
 					"name": "1. Cleanup: Delete Email",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "04c85932-29b0-4188-a524-f6c2b8ea7ab8",
+								"exec": [
+									"tests[\"Email was successfully deleted.\"] = responseCode.code === 204;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED}}",
 							"host": [
@@ -220,6 +257,43 @@
 							"path": [
 								"mailinglist",
 								"db",
+								"{{EMAIL_ADDED}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email from Mailchimp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "04c85932-29b0-4188-a524-f6c2b8ea7ab8",
+								"exec": [
+									"tests[\"Email was successfully deleted.\"] = responseCode.code === 204;"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{API_KEY}}"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"mailchimp",
 								"{{EMAIL_ADDED}}"
 							]
 						}
@@ -257,6 +331,11 @@
 								"name": "Content-Type",
 								"type": "text",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -302,6 +381,11 @@
 								"name": "Content-Type",
 								"type": "text",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -347,6 +431,11 @@
 								"name": "Content-Type",
 								"type": "text",
 								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -386,7 +475,13 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db?limit=2",
 							"host": [
@@ -407,10 +502,16 @@
 					"response": []
 				},
 				{
-					"name": "1. Cleanup: Delete Email (1)",
+					"name": "1. Cleanup: Delete Email from DB (1)",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED1}}",
 							"host": [
@@ -426,10 +527,41 @@
 					"response": []
 				},
 				{
-					"name": "1. Cleanup: Delete Email (2)",
+					"name": "1. Cleanup: Delete Email from Mailchimp (1)",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{API_KEY}}"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED1}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"mailchimp",
+								"{{EMAIL_ADDED1}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email from DB (2)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{API_KEY}}"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED2}}",
 							"host": [
@@ -445,10 +577,41 @@
 					"response": []
 				},
 				{
-					"name": "1. Cleanup: Delete Email (3)",
+					"name": "1. Cleanup: Delete Email from Mailchimp (2)",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{API_KEY}}"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED2}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"mailchimp",
+								"{{EMAIL_ADDED2}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email from DB (3)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED3}}",
 							"host": [
@@ -457,6 +620,31 @@
 							"path": [
 								"mailinglist",
 								"db",
+								"{{EMAIL_ADDED3}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1. Cleanup: Delete Email from Mailchimp (3)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{API_KEY}}"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED3}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"mailinglist",
+								"mailchimp",
 								"{{EMAIL_ADDED3}}"
 							]
 						}
@@ -493,6 +681,11 @@
 								"key": "Content-Type",
 								"name": "Content-Type",
 								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
 								"type": "text"
 							}
 						],
@@ -541,7 +734,13 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "{{SERVER}}/mailinglist/db",
 							"host": [
