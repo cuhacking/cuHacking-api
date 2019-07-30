@@ -106,7 +106,7 @@ Database.getAll = function(collection, limit=0){
             resolve(res);
         
         }).catch(function(err){
-            reject(Error(err));
+            reject(err);
         });
     });
 
@@ -128,12 +128,12 @@ Database.get = function(collection, id){
         let collectionRef = db.collection(collection).doc(id);
         collectionRef.get().then(function(doc){
             if(!doc.exists){
-                reject(Error("Database get by id: document with id " + id + " in collection " + collection + " not found!"));
+                reject("Database get by id: document with id " + id + " in collection " + collection + " not found!");
             } else {
                 resolve(doc.data());
             }
         }).catch(function(err){
-            reject(Error(err));
+            reject(err);
         });
     });
 
@@ -182,7 +182,7 @@ Database.search = function(collection, field, value){
         collectionRef.where(field, '==', value).get().then(function(snapshot){
 
             if(snapshot.empty){
-                reject(Error("Value does not exist in collection: " + collection));
+                reject("Value does not exist in collection: " + collection);
             }
             
             snapshot.forEach(function(doc){
@@ -190,7 +190,7 @@ Database.search = function(collection, field, value){
             });
 
         }).catch(function(err){
-            reject(Error(err));
+            reject(err);
         });
     });
 
