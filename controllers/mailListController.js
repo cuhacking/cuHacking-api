@@ -5,6 +5,17 @@ const MailListController = module.exports;
 const COLLECTION_NAME = 'mailing_list';
 const MAILING_LIST = 'MailingList';
 
+const ALLOWED_ORIGIN = 'http://localhost:3000'; 
+
+MailListController.preflight = function(req, res) {
+
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN); 
+    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS'); 
+    res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type');  
+    res.sendStatus(200); 
+
+}
+
 MailListController.get = function(req, res){
     
     let limit = req.query.limit || 0; // If the limit query is set, use that, otherwise use 0
@@ -48,6 +59,10 @@ MailListController.add = function(req, res){
 
     let email = req.body.email;
     let mailchimpGroup = req.body.group;
+
+    // TODO: Is there some better place/way to do this? The MDN indicates we need 
+    // to set this header on both the preflight request and the actual, _real_ request. 
+    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN); 
 
     if(validateEmail(email)){
         let data = {
