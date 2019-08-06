@@ -8,6 +8,9 @@ const app = express();
 const routes = require('./routes/routes');
 const mailing_list = require('./routes/mailinglist')
 
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
+
 // Middleware for handling JSON bodies
 app.use(express.json())
 app.use(passport.initialize());
@@ -59,6 +62,7 @@ app.use(passport.authenticate('bearer'), function(req, res, next){
 // Handle API endpoints
 app.use('/', routes);
 app.use('/mailinglist/', mailing_list);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Start the server
 app.listen(PORT, function(){

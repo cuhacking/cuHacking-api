@@ -26,5 +26,6 @@
     "mailchimp-api-v3": "^1.13.0",
     "passport": "^0.4.0",
     "passport-http-bearer": "^1.0.1",
+    "swagger-ui-express": "^4.0.7"
   }
 }
