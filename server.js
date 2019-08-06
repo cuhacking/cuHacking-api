@@ -60,6 +60,8 @@ app.use(passport.authenticate('bearer'), function(req, res, next){
 });
 
 // Handle API endpoints
+app.options('*', mailing_list); 
+
 app.use('/', routes);
 app.use('/mailinglist/', mailing_list);
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
@@ -67,4 +69,5 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Start the server
 app.listen(PORT, function(){
     console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode");
+    console.log('hello?'); 
 });
