@@ -1,0 +1,318 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the API for cuHacking 2020.",
+    "version": "1.0.2",
+    "title": "Magneton (cuHacking 2020 API)",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host": "api.cuhacking.com",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Mailing List",
+      "description": "The mailing list - handles collection of emails"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/mailinglist/subscribe": {
+      "post": {
+        "tags": [
+          "subscribe"
+        ],
+        "summary": "Subscribe a user to the mailing list",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Email to be subscribed",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Email successfully added"
+          },
+          "405": {
+            "description": "Invalid input"
+          },
+          "500": {
+            "description": "Failure from Firestore or Mailchimp"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/mailinglist/db": {
+      "get": {
+        "tags": [
+          "db"
+        ],
+        "summary": "Get all emails in the database",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Emails successfully retrieved",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "integer"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving from Firestore"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/mailinglist/db/{email}": {
+      "get": {
+        "tags": [
+          "db"
+        ],
+        "summary": "Get a single email from the database",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "description": "Email to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email successfully retrieved",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "integer"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving from Firestore"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "db"
+        ],
+        "summary": "Delete an email from the database",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "description": "Email to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Email successfully deleted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Email was not found in the database"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    },
+    "/mailinglist/mailchimp/{email}": {
+      "get": {
+        "tags": [
+          "mailchimp"
+        ],
+        "summary": "Get a single email from Mailchimp",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "description": "Email to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email successfully retrieved",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "integer"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving from Mailchimp"
+          }
+        },
+        "security": [
+          {
+            "petstore_auth": [
+              "write:pets",
+              "read:pets"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "petstore_auth": {
+      "type": "oauth2",
+      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "flow": "implicit",
+      "scopes": {
+        "write:pets": "modify pets in your account",
+        "read:pets": "read your pets"
+      }
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
