@@ -52,7 +52,7 @@ Mail.createList = function(name){
         mailchimp.post('/lists', list_settings).then(function(res){
             resolve(res); 
         }, function(error){
-            reject(Error(error));
+            reject(error);
         });
     });
 
@@ -92,9 +92,9 @@ Mail.getGroup = function(list, groupName){
                 }
             }
 
-            reject(Error("Group " + groupName + " not found."));
+            reject("Group " + groupName + " not found.");
         }).catch(function(err){
-            reject(Error(err));
+            reject(err);
         });
 
     });
@@ -124,7 +124,7 @@ Mail.createGroup = function(list, groupName){
         }).then(function(res){
             resolve(res);
         }).catch(function(err){
-            reject(Error(err));
+            reject(err);
         });
 
     });
@@ -151,7 +151,7 @@ Mail.getList = function(name){
                 }
             }
 
-            reject(Error("List was not found"));
+            reject("List was not found");
         });
     });
 
@@ -174,11 +174,11 @@ Mail.getUser = function(list, email){
             mailchimp.get('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest("hex")).then(function(res){
                 resolve(res)
             }, function(error){
-                reject(Error(error));
+                reject(error);
             });
 
         }, function(error){
-            reject(Error(error));
+            reject(error);
         });
         
     });
@@ -199,25 +199,45 @@ Mail.subscribe = function(list, group, email){
     
     let promise = new Promise(function(resolve, reject){
 
-        Mail.getGroup(list, group).then(function(groupRes){
-            // This uses Promise.all as a way of passing a variable down the promise chain
-            return Promise.all([Mail.getList(list), groupRes]);
-        }).then(function([resList, groupRes]){
-            let interests = {};
-            interests[groupRes.id] = true;
-
-            return mailchimp.post('/lists/' + resList.id + '/members', {
+        Mail.getList(list).then(function(resList){
+            // Use Promise.all to pass the result down the promise chain
+            // PUT creates the user if they don't exist
+            return Promise.all([mailchimp.put('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex'), {
                 "email_address": email,
-                "status": "subscribed",
-                "interests": interests
-            });
+                "status": "subscribed"
+            }), resList]);
+        }).then(function([addRes, resList]){
+            return mailchimp.post('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex') + '/tags', {
+                "tags": [{
+                    "name": "2020",
+                    "status": "active"
+                }]
+            })
         }).then(function(res){
            resolve(res); 
         }).catch(function(err){
-            reject(Error(err));
+            reject(err);
         });
 
     });
 
     return promise;
+}
+
+Mail.unsubscribe = function(list, email){
+
+    let promise = new Promise(function(resolve, reject){
+        
+        Mail.getList(list).then(function(listRes){
+            return mailchimp.delete('/lists/' + listRes.id + '/members/' + crypto.createHash('md5').update(email).digest('hex'));
+        }).then(function(res){
+            resolve(res);
+        }).catch(function(err){
+            reject(err);
+        });
+
+    });
+
+    return promise;
+
 }
