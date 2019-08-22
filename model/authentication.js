@@ -2,6 +2,7 @@ const passport = require('passport');
 const Strategy = require('passport-http-bearer').Strategy;
 const Database = require('./database');
 const bcrypt = require('bcrypt');
+const ROLES = {"public": 0, "user": 1, "admin": 2};
 
 var Authentication = module.exports;
 
@@ -27,7 +28,14 @@ Authentication.init = function(){
     }));
 }
 
-Authentication.authenticate = passport.authenticate('bearer');
+Authentication.authenticate = function(role){
+    return function(req, res, next){
+        if(!req.isAuthenticated()) res.sendStatus(401);
+        if(ROLES[req.user.role] < ROLES[role]) res.sendStatus(403);
+        
+        next();
+    }
+};
 
 passport.serializeUser(function(user, cb) {
     cb(null, user.id);
