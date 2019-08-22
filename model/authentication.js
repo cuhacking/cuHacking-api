@@ -14,7 +14,7 @@ Authentication.init = function(){
             return done(null, false);
         }
     
-        Database.search('Authorization', 'apikey', apikey).then(function(res){
+        Database.search('accounts', 'apikey', apikey).then(function(res){
             if(!res) {
                 return done(null, false);
             }
@@ -29,21 +29,26 @@ Authentication.init = function(){
 }
 
 Authentication.authenticate = function(role){
-    return function(req, res, next){
-        if(!req.isAuthenticated()) res.sendStatus(401);
-        if(ROLES[req.user.role] < ROLES[role]) res.sendStatus(403);
-        
+
+    return [passport.authenticate('bearer'), function(req, res, next){
+ 
+        if(req.user && ROLES[req.user.role] < ROLES[role]) {
+            res.sendStatus(403);
+            console.log("insufficient role");
+            return;
+        }
+
         next();
-    }
+    }]
 };
 
 passport.serializeUser(function(user, cb) {
-    cb(null, user.id);
+    cb(null, user.uid);
 });
 
-passport.deserializeUser(function(id, cb) {
+passport.deserializeUser(function(uid, cb) {
 
-    Database.search('Authorization', id).then(function(res){
+    Database.search('accounts', 'uid', uid).then(function(res){
 
         if(!res) {
             return cb(null);

@@ -17,7 +17,7 @@ const Authentication = require('../model/authentication');
  
 router.options('*', MailListController.preflight); 
 
-router.get('/db', Authentication.authenticate, MailListController.get);
+router.get('/db', Authentication.authenticate("admin"), MailListController.get);
 router.get('/mailchimp/:email', MailListController.getMailchimp);
 router.get('/db/:email', MailListController.getByEmail);
 
