@@ -4,26 +4,41 @@ const Database = require('./database');
 const bcrypt = require('bcrypt');
 const ROLES = {"public": 0, "user": 1, "admin": 2};
 
+let fbAuth;
+
 var Authentication = module.exports;
 
-Authentication.init = function(){
+Authentication.init = function(admin){
+
+    fbAuth = admin.auth();
+
     passport.use(new Strategy(function(apikey, done){
 
         if(!apikey){
             console.log("No api key provided");
             return done(null, false);
         }
-    
-        Database.search('accounts', 'apikey', apikey).then(function(res){
-            if(!res) {
+
+        fbAuth.verifyIdToken(apikey).then(function(decodedToken){
+            let uid = decodedToken.uid;
+
+            Database.search('accounts', 'uid', uid).then(function(res){
+                if(!res) {
+                    return done(null, false);
+                }
+                
+                return done(null, res);
+            }).catch(function(err){
+                console.log("Error in auth:" + err);
                 return done(null, false);
-            }
-            
-            return done(null, res);
-        }).catch(function(err){
-            console.log("Error in auth:" + err);
+            });
+
+        }).catch(function(error){
+            console.log("Error verifying token");
             return done(null, false);
         });
+    
+
     
     }));
 }

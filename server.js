@@ -2,6 +2,7 @@ const express = require('express');
 const PORT = process.env.PORT || 8080; // Use the process's port if given (PaaS), otherwise use 8080
 const passport = require('passport');
 const Authentication = require('./model/authentication');
+const Database = require('./model/database');
 const http = require('http');
 const https = require('https');
 
@@ -12,11 +13,24 @@ const mailing_list = require('./routes/mailinglist')
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
+const admin    = require('firebase-admin');
+const config   = require('./config.json');  
+
+const env = process.env.NODE_ENV || "development";
+
+const serviceAccount = require('./' + config[env].firebase_key_file);
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: config[env].firebase_url
+});
+
 // Middleware for handling JSON bodies
 app.use(express.json())
 app.use(passport.initialize());
 
-Authentication.init();
+Authentication.init(admin);
+Database.init(admin);
 
 // Handle API endpoints
 app.options('*', mailing_list); 
