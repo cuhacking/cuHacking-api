@@ -1,12 +1,13 @@
 const Database  = require('../model/database');
-const Account   = require('../mode;/account');
-const AccountController = module.exports;
+const User   = require('../model/user');
+const UsersController = module.exports;
+const Authentication = require('../model/authentication');
 
-const COLLECTION_NAME = 'accounts';
+const COLLECTION_NAME = 'Users';
 
 const ALLOWED_ORIGIN = 'http://localhost:3000'; 
 
-AccountController.preflight = function(req, res) {
+UsersController.preflight = function(req, res) {
 
     res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN); 
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS'); 
@@ -16,31 +17,44 @@ AccountController.preflight = function(req, res) {
 }
 
 
-AccountController.create = function(req, res){
+UsersController.create = function(req, res){
 
-    // Decide on schema for accounts
-    let account = new Account();
+    Authentication.getUid(req.body.token).then(function(uid){
+        //TODO: Decide on schema for accounts
+        let user = {
+            "username": req.body.username,
+            "role": "user",
+            "uid": uid
+        }
 
-    Database.add(COLLECTION_NAME, 'username', account).then(function(res){
-        res.status(201).send({
-            account: account,
-            operation: 'create',
-            status: 'success',
-            message: 'Account successfully created'
+        Database.add(COLLECTION_NAME, 'username', user).then(function(dbRes){
+            res.status(201).send({
+                user: user,
+                operation: 'create',
+                status: 'success',
+                message: 'User successfully created'
+            });
+        }).catch(function(err){
+            res.status(500).send({
+                user: user,
+                operation: 'create',
+                status: 'failure',
+                message: err
+            })
         });
     }).catch(function(err){
         res.status(500).send({
-            account: account,
+            user: req.body.username,
             operation: 'create',
-            status: 'success',
-            message: 'Account could not be created in the database'
-        })
+            status: 'failure',
+            message: err
+        });
     });
 
 }
 
 
-AccountController.delete = function(req, res){
+UsersController.delete = function(req, res){
 
     let username = req.params.username;
     let doc = Database.get(COLLECTION_NAME, username);
@@ -50,7 +64,7 @@ AccountController.delete = function(req, res){
             username: username,
             operation: 'delete',
             status: 'failed',
-            message: 'Account not found'
+            message: 'User not found'
         });
     } else {
         Database.remove(COLLECTION_NAME, username).then(function(){
@@ -58,7 +72,7 @@ AccountController.delete = function(req, res){
                 email: email,
                 operation: 'delete',
                 status: 'success',
-                message: 'Account successfully deleted' 
+                message: 'User successfully deleted' 
             });
         });
     }
@@ -66,7 +80,7 @@ AccountController.delete = function(req, res){
 }
 
 
-AccountController.get = function(req, res){
+UsersController.get = function(req, res){
 
     let limit = req.query.limit || 0; // If the limit query is set, use that, otherwise use 0
     Database.getAll(COLLECTION_NAME, limit).then(function(databaseResult){
@@ -85,17 +99,20 @@ AccountController.get = function(req, res){
 }
 
 
-AccountController.getByUsername = function(req, res){
+UsersController.getByUsername = function(req, res){
     
     let username = req.params.username;
     Database.get(COLLECTION_NAME, username).then(function(databaseResult){
 
-        if(req.user.role != "admin" && req.user.id != databaseResult.id) res.status(403).send({
-            username: username,
-            operation: 'get',
-            status: 'unauthorized',
-            data: 'You are not authorized to view this user'
-        });
+        if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
+            res.status(403).send({
+                username: username,
+                operation: 'get',
+                status: 'unauthorized',
+                data: 'You are not authorized to view this user'
+            });
+            return;
+        }
 
         if(databaseResult){
             res.status(200).send({
@@ -109,7 +126,7 @@ AccountController.getByUsername = function(req, res){
                 username: username,
                 operation: 'get',
                 status: 'failed',
-                message: 'Account not found'
+                message: 'User not found'
             });
         }
     }).catch(function(err){
