@@ -17,6 +17,6 @@ router.get('/:username', Authentication.authenticate("user"), UsersController.ge
 
 router.post('/', UsersController.create);
 
-router.delete('/:username', Authentication.authenticate("adminm"), UsersController.delete);
+router.delete('/:username', Authentication.authenticate("admin"), UsersController.delete);
 
 module.exports = router;

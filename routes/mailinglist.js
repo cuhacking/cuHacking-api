@@ -18,12 +18,12 @@ const Authentication = require('../model/authentication');
 router.options('*', MailListController.preflight); 
 
 router.get('/db', Authentication.authenticate("admin"), MailListController.get);
-router.get('/mailchimp/:email', MailListController.getMailchimp);
-router.get('/db/:email', MailListController.getByEmail);
+router.get('/mailchimp/:email', Authentication.authenticate("admin"), MailListController.getMailchimp);
+router.get('/db/:email', Authentication.authenticate("admin"), MailListController.getByEmail);
 
 router.post('/subscribe', MailListController.add);
 
-router.delete('/db/:email', MailListController.delete);
-router.delete('/mailchimp/:email', MailListController.deleteMailchimp);
+router.delete('/db/:email', Authentication.authenticate("admin"), MailListController.delete);
+router.delete('/mailchimp/:email', Authentication.authenticate("admin"), MailListController.deleteMailchimp);
 
 module.exports = router;
