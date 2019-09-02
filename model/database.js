@@ -10,22 +10,13 @@
 /**
  * Imports and Setup
  */
-const admin    = require('firebase-admin');
-const config   = require('../config.json');  
-
-const env = process.env.NODE_ENV || "development";
-
-var serviceAccount = require('../' + config[env].firebase_key_file);
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: config[env].firebase_url
-});
-
-const db = admin.firestore();
+let db;
 
 var Database = module.exports;
 
+Database.init = function(admin){
+    db = admin.firestore();
+}
 
 /**
  * Add data to a collection in the database

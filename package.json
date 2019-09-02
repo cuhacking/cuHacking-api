@@ -4,8 +4,8 @@
   "description": "Application server for cuHacking",
   "main": "server.js",
   "scripts": {
-    "start": "set NODE_ENV=production&& node server.js",
-    "test": "set NODE_ENV=development&& node server.js"
+    "start": "NODE_ENV=production node server.js",
+    "test": "NODE_ENV=development node server.js"
   },
   "repository": {
     "type": "git",

@@ -1,7 +1,8 @@
 const express   = require('express');
 const router    = express.Router();
 
-const MailListController = require('../controllers/mailListController')
+const MailListController = require('../controllers/mailListController');
+const Authentication = require('../model/authentication');
 
 /**
  * Mailing List Routes
@@ -16,7 +17,7 @@ const MailListController = require('../controllers/mailListController')
  
 router.options('*', MailListController.preflight); 
 
-router.get('/db', MailListController.get);
+router.get('/db', Authentication.authenticate("admin"), MailListController.get);
 router.get('/mailchimp/:email', MailListController.getMailchimp);
 router.get('/db/:email', MailListController.getByEmail);
 
