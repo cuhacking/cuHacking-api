@@ -81,7 +81,7 @@ Authentication.getUid = function(token){
         fbAuth.verifyIdToken(token).then(function(decodedToken){
             resolve(decodedToken.uid);
         }).catch(function(err){
-            reject("Error verifying token: " + error);
+            reject("Error verifying token: " + err);
         });
     });
 

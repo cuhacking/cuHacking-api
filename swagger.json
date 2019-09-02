@@ -444,6 +444,49 @@
           }
         ]
       },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update fields in a user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "username",
+            "description": "username of user to update",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized to update this user"
+          },
+          "500": {
+            "description": "Error in modifying the user in the database"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Users"
@@ -462,7 +505,7 @@
           "application/json"
         ],
         "responses": {
-          "204": {
+          "200": {
             "description": "User successfully deleted",
             "schema": {
               "type": "object",

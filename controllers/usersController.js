@@ -68,7 +68,7 @@ UsersController.delete = function(req, res){
         });
     } else {
         Database.remove(COLLECTION_NAME, username).then(function(){
-            res.status(204).send({
+            res.status(200).send({
                 email: email,
                 operation: 'delete',
                 status: 'success',
@@ -132,5 +132,39 @@ UsersController.getByUsername = function(req, res){
     }).catch(function(err){
         res.status(500).send(err);
     });
+
+}
+
+
+UsersController.update = function(req, res){
+
+    let username = req.params.username;
+
+    Database.get(COLLECTION_NAME, username).then(function(databaseResult){
+
+        if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
+            res.status(403).send({
+                username: username,
+                operation: 'update',
+                status: 'unauthorized',
+                data: 'You are not authorized to update this user'
+            });
+            return;
+        }   
+        
+        Database.update(COLLECTION_NAME, username, req.body).then(function(){
+            res.status(200).send({
+                username: username,
+                operation: 'update',
+                status: 'success'
+            });
+        }).catch(function(err){
+            res.status(500).send(err);
+        });
+
+    }).catch(function(err){
+        res.status(500).send(err);
+    });
+
 
 }
