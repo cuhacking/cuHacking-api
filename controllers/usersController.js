@@ -27,7 +27,7 @@ UsersController.create = function(req, res){
             "uid": uid
         }
 
-        Database.add(COLLECTION_NAME, 'username', user).then(function(dbRes){
+        Database.add(COLLECTION_NAME, 'uid', user).then(function(dbRes){
             res.status(201).send({
                 user: user,
                 operation: 'create',
@@ -56,8 +56,8 @@ UsersController.create = function(req, res){
 
 UsersController.delete = function(req, res){
 
-    let username = req.params.username;
-    let doc = Database.get(COLLECTION_NAME, username);
+    let uid = req.params.uid;
+    let doc = Database.get(COLLECTION_NAME, uid);
 
     if(!doc){
         res.status(404).send({
@@ -99,14 +99,14 @@ UsersController.get = function(req, res){
 }
 
 
-UsersController.getByUsername = function(req, res){
+UsersController.getByUid = function(req, res){
     
-    let username = req.params.username;
-    Database.get(COLLECTION_NAME, username).then(function(databaseResult){
+    let uid = req.params.uid;
+    Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({
-                username: username,
+                uid: uid,
                 operation: 'get',
                 status: 'unauthorized',
                 data: 'You are not authorized to view this user'
@@ -116,14 +116,14 @@ UsersController.getByUsername = function(req, res){
 
         if(databaseResult){
             res.status(200).send({
-                username: username,
+                uid: uid,
                 operation: 'get',
                 status: 'success',
                 data: databaseResult
             });
         } else {
             res.status(404).send({
-                username: username,
+                uid: uid,
                 operation: 'get',
                 status: 'failed',
                 message: 'User not found'
@@ -138,13 +138,13 @@ UsersController.getByUsername = function(req, res){
 
 UsersController.update = function(req, res){
 
-    let username = req.params.username;
+    let uid = req.params.uid;
 
-    Database.get(COLLECTION_NAME, username).then(function(databaseResult){
+    Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({
-                username: username,
+                uid: uid,
                 operation: 'update',
                 status: 'unauthorized',
                 data: 'You are not authorized to update this user'
@@ -152,9 +152,9 @@ UsersController.update = function(req, res){
             return;
         }   
         
-        Database.update(COLLECTION_NAME, username, req.body).then(function(){
+        Database.update(COLLECTION_NAME, uid, req.body).then(function(){
             res.status(200).send({
-                username: username,
+                uid: uid,
                 operation: 'update',
                 status: 'success'
             });

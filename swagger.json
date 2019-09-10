@@ -384,7 +384,7 @@
         ]
       }
     },
-    "/users/{username}": {
+    "/users/{uid}": {
       "get": {
         "tags": [
           "Users"
@@ -393,8 +393,8 @@
         "parameters": [
           {
             "in": "path",
-            "name": "username",
-            "description": "Username to get",
+            "name": "uid",
+            "description": "uid to get",
             "required": true,
             "type": "string"
           }
@@ -452,8 +452,8 @@
         "parameters": [
           {
             "in": "path",
-            "name": "username",
-            "description": "username of user to update",
+            "name": "uid",
+            "description": "uid of user to update",
             "required": true,
             "type": "string"
           }
@@ -495,8 +495,8 @@
         "parameters": [
           {
             "in": "path",
-            "name": "username",
-            "description": "username of user to delete",
+            "name": "uid",
+            "description": "uid of user to delete",
             "required": true,
             "type": "string"
           }

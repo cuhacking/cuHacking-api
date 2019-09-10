@@ -15,7 +15,7 @@ router.options('*', MailListController.preflight);
 router.get('/', Authentication.authenticate("admin"), UsersController.get);
 router.post('/', UsersController.create);
 
-router.get('/:username', Authentication.authenticate("user"), UsersController.getByUsername);
+router.get('/:username', Authentication.authenticate("user"), UsersController.getByUid);
 router.patch('/:username', Authentication.authenticate("user"), UsersController.update);
 router.delete('/:username', Authentication.authenticate("admin"), UsersController.delete);
 
