@@ -34,23 +34,27 @@ ResourceController.getVersions = function(req, res){
 }
 
 
-ResourceController.createMap = function(req, res){
+ResourceController.createResource = function(req, res){
 
-    Database.get(COLLECTION_NAME, "map").then(function(dbRes){
+    let resource = req.params.resource;
+    Database.get(COLLECTION_NAME, resource).then(function(dbRes){
         res.status(400).send({
-            "resource": "map",
-            "operation": "create",
-            "status": "failed",
-            "message": "Map data already exists. Update it with a PATCH request instead"
+            resource: resource,
+            operation: "create",
+            status: "failed",
+            message: resource + " data already exists. Update it with a PATCH request instead"
         });
+
     }).catch(function(err){
         // TODO: Do I need to explicitly check the error message?
-        Database.add(COLLECTION_NAME, "map", req.body.data).then(function(dbRes){
+        let data = req.body.data;
+        data.version = 1;
+        Database.add(COLLECTION_NAME, resource, data).then(function(dbRes){
             res.status(201).send({
-               "resource": "map",
-                "operation": "create",
-                "status": "success",
-                "message": "Map data successfully created"
+                resource: resource,
+                operation: "create",
+                status: "success",
+                message: resource + " data successfully created"
             });
         }).catch(function(err){
             res.status(500).send(err);
@@ -61,6 +65,67 @@ ResourceController.createMap = function(req, res){
 }
 
 
-ResourceController.getMap = function(req, res){
+ResourceController.updateResource = function(req, res){
+
+    let resource = req.params.resource;
+    Database.get(COLLECTION_NAME, resource).then(function(dbRes){
+        let data = res.body.data;
+        data.version = dbRes.version + 1;
+
+        Database.update(COLLECTION_NAME, resource, data).then(function(updateRes){
+            res.status(201).send({
+               resource: resource,
+               operation: "create",
+               status: "success",
+               message: resource + " data successfully updated" 
+            });
+        }).catch(function(updateErr){
+            res.status(500).send(updateErr);
+        });
+    }).catch(function(getErr){
+        res.status(500).send(getErr);
+    })  
+
+}
+
+
+ResourceController.getResource = function(req, res){
     
+    Database.get(COLLECTION_NAME, resource).then(function(getRes){
+        res.status(201).send({
+            resource: resource,
+            operation: "get",
+            status: "success",
+            data: getRes
+        });
+    }).catch(function(getErr){
+        res.status(500).send(getErr);
+    });
+
+}
+
+
+ResourceController.deleteResource - function(req, res){
+
+    let resource = req.params.resource;
+    let doc = Database.get(COLLECTION_NAME, resource);
+
+    if(!doc){
+        res.status(404).send({
+            resource: resource,
+            operation: 'delete',
+            status: 'failed',
+            message: 'Resource not found'
+        });
+    } else {
+        Database.remove(COLLECTION_NAME, resource).then(function(){
+            res.status(204).send({
+                resource: resource,
+                operation: 'delete',
+                status: 'success',
+                message: resource + ' successfully deleted' 
+            });
+        });
+    }
+
 }
