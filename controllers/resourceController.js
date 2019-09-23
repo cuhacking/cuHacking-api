@@ -34,7 +34,33 @@ ResourceController.getVersions = function(req, res){
 }
 
 
-ResourceController.createResource = function(req, res){
+ResourceController.getResourceVersion = function(req, res){
+    
+    let resource = req.params.resource;
+    Database.get(COLLECTION_NAME, resource).then(function(dbRes){
+        if(dbRes.version !== undefined){
+            res.status(200).send({
+                "resource": resource,
+                "operation": "get",
+                "status": "success",
+                "message": "Map version successfully retrieved"
+            });
+        } else {
+            res.status(404).send({
+                "resource": resource,
+                "operation": "get",
+                "status": "failed",
+                "message": "Version number not found"
+            });
+        }
+    }).catch(function(err){
+        res.status(500).send(err);
+    });
+
+}
+
+
+ResourceController.createMap = function(req, res){
 
     let resource = req.params.resource;
     Database.get(COLLECTION_NAME, resource).then(function(dbRes){

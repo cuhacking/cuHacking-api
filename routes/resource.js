@@ -19,6 +19,7 @@ const ResourceController = require('../controller.  ')
 router.options('*', MailListController.preflight); 
 
 router.get('/version', ResourceController.getVersions);
+router.get('/version/:resource', ResourceController.getResourceVersion);
 
 router.post('/:resource', Authentication.authenticate("admin"), ResourceController.createResource);
 router.get('/:resource', ResourceController.getResource);
