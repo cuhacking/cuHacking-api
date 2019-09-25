@@ -10,11 +10,15 @@
     }
   },
   "host": "api.cuhacking.com",
-  "basePath": "/",
+  "basePath": "/api",
   "tags": [
     {
       "name": "Mailing List",
       "description": "The mailing list - handles collection of emails"
+    },
+    {
+      "name": "Users",
+      "description": "Handles users and their accounts"
     }
   ],
   "schemes": [
@@ -25,7 +29,7 @@
     "/mailinglist/subscribe": {
       "post": {
         "tags": [
-          "subscribe"
+          "Mailing List"
         ],
         "summary": "Subscribe a user to the mailing list",
         "description": "",
@@ -64,21 +68,13 @@
           "500": {
             "description": "Failure from Firestore or Mailchimp"
           }
-        },
-        "security": [
-          {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
-            ]
-          }
-        ]
+        }
       }
     },
     "/mailinglist/db": {
       "get": {
         "tags": [
-          "db"
+          "Mailing List"
         ],
         "summary": "Get all emails in the database",
         "produces": [
@@ -117,9 +113,8 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
+            "magneton_auth": [
+              "admin"
             ]
           }
         ]
@@ -128,7 +123,7 @@
     "/mailinglist/db/{email}": {
       "get": {
         "tags": [
-          "db"
+          "Mailing List"
         ],
         "summary": "Get a single email from the database",
         "produces": [
@@ -148,9 +143,6 @@
             "description": "Email successfully retrieved",
             "schema": {
               "type": "object",
-              "required": [
-                "email"
-              ],
               "properties": {
                 "operation": {
                   "type": "string"
@@ -176,16 +168,15 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
+            "magneton_auth": [
+              "admin"
             ]
           }
         ]
       },
       "delete": {
         "tags": [
-          "db"
+          "Mailing List"
         ],
         "summary": "Delete an email from the database",
         "produces": [
@@ -227,9 +218,8 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
+            "magneton_auth": [
+              "admin"
             ]
           }
         ]
@@ -238,7 +228,7 @@
     "/mailinglist/mailchimp/{email}": {
       "get": {
         "tags": [
-          "mailchimp"
+          "Mailing List"
         ],
         "summary": "Get a single email from Mailchimp",
         "produces": [
@@ -286,29 +276,271 @@
         },
         "security": [
           {
-            "petstore_auth": [
-              "write:pets",
-              "read:pets"
+            "magneton_auth": [
+              "admin"
             ]
           }
         ]
       }
+    },
+    "/users": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "token"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User successfully created"
+          },
+          "500": {
+            "description": "Failure in parsing the token or creating the user in Firestore"
+          }
+        },
+        "security": [
+          {
+            "magneton_auth": [
+              "admin"
+            ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get all users in the database",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Users successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "items": {
+                  "type": "integer"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "uid": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving from Firestore"
+          }
+        },
+        "security": [
+          {
+            "magneton_auth": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/{uid}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Get a specific user in the database",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uid",
+            "description": "uid to get",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "uid": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error retrieving from Firestore"
+          }
+        },
+        "security": [
+          {
+            "magneton_auth": [
+              "admin",
+              "user"
+            ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update fields in a user",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uid",
+            "description": "uid of user to update",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully updated",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User is not authorized to update this user"
+          },
+          "500": {
+            "description": "Error in modifying the user in the database"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Delete a user from the database",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "uid",
+            "description": "uid of user to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully deleted",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User was not found in the database"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
-    "petstore_auth": {
+    "magneton_auth": {
       "type": "oauth2",
       "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
       "flow": "implicit",
       "scopes": {
-        "write:pets": "modify pets in your account",
-        "read:pets": "read your pets"
+        "user": "Access own data",
+        "admin": "Admin access"
       }
-    },
-    "api_key": {
-      "type": "apiKey",
-      "name": "api_key",
-      "in": "header"
     }
   },
   "externalDocs": {

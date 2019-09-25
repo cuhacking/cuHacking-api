@@ -67,7 +67,7 @@ Database.update = function(collection, id, data){
     let docRef = db.collection(collection).doc(id);
     let updatePromise = docRef.update(data);
 
-    return Promise.all([dbPromise]);
+    return Promise.all([updatePromise]);
 
 }
 
