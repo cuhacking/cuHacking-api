@@ -38,22 +38,34 @@ app.options('*', mailing_list);
 
 app.use('/api', routes);
 app.use('/api/mailinglist/', mailing_list);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
 app.use('/api/users/', users);
 
-// Use HTTPS for production
-if(process.env.NODE_ENV === "production"){
-    const options = {
-        key: fs.readFileSync(config.ssl_key),
-        cert: fs.readFileSync(config.ssl_cert)
-      };
-      
-    https.createServer(options, app).listen(PORT, function(){
-        console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTPS");
-    });
-} else {
-    // Start the server
-    app.listen(PORT, function(){
-        console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTP");
-    });
+// Start the server
+app.listen(PORT, function(){
+    console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTP");
+});
+
+
+// Extremely basic auth for the documentation while waiting for full authentication
+// TODO: Replace/remove this    
+function basicAuth(req, res, next){
+
+    const auth = { username: config[env].credentials.username, password: config[env].credentials.password };
+
+    if(!req.headers.authorization){
+        res.set('WWW-Authenticate', 'Basic realm="You must be logged in to view this page."');
+        res.status(401).send('Please log in to view this page.');
+        return;
+    }
+
+    const base64Credentials =  req.headers.authorization.split(' ')[1];
+    const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
+    const [username, password] = credentials.split(':');
+
+    if(username && password && username == auth.username && password == auth.password) return next();
+
+    res.set('WWW-Authenticate', 'Basic realm="You must be logged in to view this page."');
+    res.status(401).send('Please log in to view this page.');
+
 }

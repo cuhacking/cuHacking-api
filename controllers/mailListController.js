@@ -1,11 +1,13 @@
 const Database  = require('../model/database');
 const Mail = require('../model/mail');
+const config   = require('../config.json');  
 const MailListController = module.exports;
 
 const COLLECTION_NAME = 'mailing_list';
 const MAILING_LIST = 'MailingList';
 
-const ALLOWED_ORIGIN = 'http://localhost:3000'; 
+const env = process.env.NODE_ENV || "development";
+const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:8080'; 
 
 MailListController.preflight = function(req, res) {
 
