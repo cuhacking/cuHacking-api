@@ -211,8 +211,12 @@ Mail.subscribe = function(list, group, email){
                 "tags": [{
                     "name": "2020",
                     "status": "active"
+                },
+                {
+                    "name": "newsletter",
+                    "status": "active"
                 }]
-            })
+            });
         }).then(function(res){
            resolve(res); 
         }).catch(function(err){
