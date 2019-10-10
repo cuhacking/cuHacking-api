@@ -64,56 +64,31 @@ MailListController.getByEmail = function(req, res){
 MailListController.add = function(req, res){
 
     let email = req.body.email;
-    let mailchimpGroup = req.body.group;
 
     // TODO: Is there some better place/way to do this? The MDN indicates we need 
     // to set this header on both the preflight request and the actual, _real_ request. 
     res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN); 
 
     if(validateEmail(email)){
-        let data = {
-            email: email
-        }
 
-        Database.add(COLLECTION_NAME, 'email', data).then(function(ref){
-            if(ref){
-
-                console.log("Adding to mailchimp...");
-                // Add to database succeeded, now add to Mailchimp
-                Mail.subscribe(MAILING_LIST, mailchimpGroup, email).then(function(mailchimpRes){
-                    res.status(201).send({
-                        email: email,
-                        operation: 'add',
-                        status: 'success',
-                        message: 'Email successfully added to mailing list'
-                    });
-                }, function(error){
-                    // Subscribe to Mailchimp failed. Remove from database to prevent data mismatch
-                    Database.remove(COLLECTION_NAME, email).then(function(removeRes){
-                        res.status(500).send({
-                            email: email,
-                            operation: 'add',
-                            status: 'failed',
-                            message: 'Subscribing to Mailchimp failed. Email also removed from database. Reason: ' + error
-                        });
-                    }, function(error){
-                        res.status(500).send({
-                            email: email,
-                            operation: 'add',
-                            status: 'failed',
-                            message: 'Subscribing to Mailchimp failed. Remove email from database FAILED. CRITICAL: Data mismatch may have occured.'
-                        });
-                    });
-                });
-            } else {
-                res.status(500).send({
-                    email: email,
-                    operation: 'add',
-                    status: 'failed',
-                    message: 'Add to mailing list failed on database'
-                });
-            }
+        console.log("Adding to mailchimp...");
+        // Add to database succeeded, now add to Mailchimp
+        Mail.subscribe(MAILING_LIST, email).then(function(mailchimpRes){
+            res.status(201).send({
+                email: email,
+                operation: 'add',
+                status: 'success',
+                message: 'Email successfully added to mailing list'
+            });
+        }).catch(function(error){
+            res.status(500).send({
+                email: email,
+                operation: 'add',
+                status: 'failed',
+                message: 'Failed to add email to Mailchimp. Reason: ' + error
+            });
         });
+
     } else {
         res.status(405).send({
             email: email,

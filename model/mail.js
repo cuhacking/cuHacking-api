@@ -195,7 +195,7 @@ Mail.getUser = function(list, email){
  * 
  * @return {Promise}            - Promise returns the response from the add operation
  */
-Mail.subscribe = function(list, group, email){
+Mail.subscribe = function(list, email){
     
     let promise = new Promise(function(resolve, reject){
 
