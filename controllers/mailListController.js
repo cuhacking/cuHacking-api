@@ -90,7 +90,7 @@ MailListController.add = function(req, res){
         });
 
     } else {
-        res.status(405).send({
+        res.status(400).send({
             email: email,
             operation: 'add',
             status: 'failed',
