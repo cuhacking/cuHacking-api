@@ -71,7 +71,7 @@ MailListController.add = function(req, res){
 
     if(validateEmail(email)){
 
-        console.log("Adding to mailchimp...");
+        console.log("Adding email to Mailchimp: " + email);
         // Add to database succeeded, now add to Mailchimp
         Mail.subscribe(MAILING_LIST, email).then(function(mailchimpRes){
             res.status(201).send({
