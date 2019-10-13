@@ -17,7 +17,8 @@ const admin    = require('firebase-admin');
 const config   = require('./config.json');  
 
 const env = process.env.NODE_ENV || "development";
-const PORT = process.env.PORT || 8080; 
+const PORT = process.env.PORT || 8080;
+const API_ROOT = config[env].api_root;
 
 const serviceAccount = require('./' + config[env].firebase_key_file);
 
