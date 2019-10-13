@@ -37,14 +37,14 @@ Database.init(admin);
 // Handle API endpoints
 app.options('*', mailing_list); 
 
-app.use('/api', routes);
-app.use('/api/mailinglist/', mailing_list);
-app.use('/api/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
-app.use('/api/users/', users);
+app.use(API_ROOT, routes);
+app.use(API_ROOT + '/mailinglist/', mailing_list);
+app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
+app.use(API_ROOT + '/users/', users);
 
 // Start the server
 app.listen(PORT, function(){
-    console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTP");
+    console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTP on " + API_ROOT);
 });
 
 
