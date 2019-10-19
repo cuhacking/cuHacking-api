@@ -71,161 +71,7 @@
         }
       }
     },
-    "/mailinglist/db": {
-      "get": {
-        "tags": [
-          "Mailing List"
-        ],
-        "summary": "Get all emails in the database",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Emails successfully retrieved",
-            "schema": {
-              "type": "object",
-              "required": [
-                "email"
-              ],
-              "properties": {
-                "operation": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "items": {
-                  "type": "integer"
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error retrieving from Firestore"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      }
-    },
-    "/mailinglist/db/{email}": {
-      "get": {
-        "tags": [
-          "Mailing List"
-        ],
-        "summary": "Get a single email from the database",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "Email to get",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Email successfully retrieved",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "operation": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "items": {
-                  "type": "integer"
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error retrieving from Firestore"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Mailing List"
-        ],
-        "summary": "Delete an email from the database",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "Email to delete",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Email successfully deleted",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "type": "string"
-                },
-                "operation": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Email was not found in the database"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      }
-    },
-    "/mailinglist/mailchimp/{email}": {
+    "/mailinglist/{email}": {
       "get": {
         "tags": [
           "Mailing List"
@@ -281,6 +127,32 @@
             ]
           }
         ]
+      },
+      "delete": {
+        "tags": [
+          "Mailing List"
+        ],
+        "summary": "Delete an email from Mailchimp",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "email",
+            "description": "Email to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Email successfully deleted"
+          },
+          "404": {
+            "description": "Email was not found"
+          }
+        }
       }
     },
     "/users": {
