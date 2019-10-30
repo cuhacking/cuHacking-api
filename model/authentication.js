@@ -12,68 +12,90 @@ Authentication.init = function(admin){
 
     fbAuth = admin.auth();
 
-    passport.use(new Strategy(function(apikey, done){
+    // passport.use(new Strategy(function(apikey, done){
 
-        if(!apikey){
-            console.log("No api key provided");
-            return done(null, false);
-        }
+    //     if(!apikey){
+    //         console.log("No api key provided");
+    //         return done(null, false);
+    //     }
 
-        Authentication.getUid(apikey).then(function(uid){
+    //     Authentication.getUid(apikey).then(function(uid){
 
-            Database.search('Users', 'uid', uid).then(function(res){
-                if(!res) {
-                    return done(null, false);
-                }
+    //         Database.search('Users', 'uid', uid).then(function(res){
+    //             if(!res) {
+    //                 return done(null, false);
+    //             }
                 
-                return done(null, res);
-            }).catch(function(err){
-                console.log("Error in auth:" + err);
-                return done(null, false);
-            });
+    //             return done(null, res);
+    //         }).catch(function(err){
+    //             console.log("Error in auth:" + err);
+    //             return done(null, false);
+    //         });
 
-        }).catch(function(error){
-            console.log("Error verifying token");
-            return done(null, false);
-        });
+    //     }).catch(function(error){
+    //         console.log("Error verifying token");
+    //         return done(null, false);
+    //     });
     
 
     
-    }));
+    // }));
 }
 
-Authentication.authenticate = function(role){
+Authentication.authenticate = function(role, token){
 
-    return [passport.authenticate('bearer'), function(req, res, next){
+    return function(req, res, next){
+        Authentication.getUid(token).then(function(uid){
+
+            return Database.search('Users', 'uid', uid);
+    
+        }).then(function(res){
+    
+            if(!res){
+                res.sendStatus(403);
+                return;
+            }
+    
+            if(ROLES[res.role] < ROLES[role]){
+                res.sendStatus(403);
+                return;
+            }
+    
+            next();
+    
+        });
+    }
+
+    // return [passport.authenticate('bearer'), function(req, res, next){
  
-        if(req.user && ROLES[req.user.role] < ROLES[role]) {
-            res.sendStatus(403);
-            console.log("insufficient role");
-            return;
-        }
+    //     if(req.user && ROLES[req.user.role] < ROLES[role]) {
+    //         res.sendStatus(403);
+    //         console.log("insufficient role");
+    //         return;
+    //     }
 
-        next();
-    }]
+    //     next();
+    // }]
 };
 
-passport.serializeUser(function(user, cb) {
-    cb(null, user.uid);
-});
+// passport.serializeUser(function(user, cb) {
+//     cb(null, user.uid);
+// });
 
-passport.deserializeUser(function(uid, cb) {
+// passport.deserializeUser(function(uid, cb) {
 
-    Database.search('accounts', 'uid', uid).then(function(res){
+//     Database.search('accounts', 'uid', uid).then(function(res){
 
-        if(!res) {
-            return cb(null);
-        }
+//         if(!res) {
+//             return cb(null);
+//         }
     
-        return cb(null, res);
-    }).catch(function(err){
-        return cb(err);
-    });
+//         return cb(null, res);
+//     }).catch(function(err){
+//         return cb(err);
+//     });
 
-});
+// });
 
 Authentication.getUid = function(token){
     

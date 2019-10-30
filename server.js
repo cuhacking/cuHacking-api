@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const Authentication = require('./model/authentication');
 const Database = require('./model/database');
+const Account = require('./model/account');
 const http = require('http');
 const https = require('https');
 
@@ -13,8 +14,9 @@ const users = require('./routes/users');
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-const admin    = require('firebase-admin');
-const config   = require('./config.json');  
+const admin = require('firebase-admin');
+const firebase = require('firebase/app');
+const config = require('./config.json');  
 
 const env = process.env.NODE_ENV || "development";
 const PORT = config[env].port;
@@ -22,10 +24,16 @@ const API_ROOT = config[env].api_root;
 
 const serviceAccount = require('./' + config[env].firebase_key_file);
 
+require('firebase/database');
+
+// Initialize Firebase admin SDK
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: config[env].firebase_url
 });
+
+// Inititalize Firebase app SDK
+firebase.initializeApp(config[env].firebase_app_config);
 
 // Middleware for handling JSON bodies
 app.use(express.json())
@@ -33,6 +41,7 @@ app.use(passport.initialize());
 
 Authentication.init(admin);
 Database.init(admin);
+Account.init(firebase, admin);
 
 // Handle API endpoints
 app.options('*', mailing_list); 

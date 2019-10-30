@@ -1,5 +1,5 @@
 const Database  = require('../model/database');
-const User   = require('../model/user');
+const Account   = require('../model/account');
 const UsersController = module.exports;
 const Authentication = require('../model/authentication');
 
@@ -19,15 +19,15 @@ UsersController.preflight = function(req, res) {
 
 UsersController.create = function(req, res){
 
-    Authentication.getUid(req.body.token).then(function(uid){
+    Account.create(req.body.email, req.body.password).then(function(uid){
         //TODO: Decide on schema for accounts
         let user = {
-            "username": req.body.username,
+            "email": req.body.email,
             "role": "user",
             "uid": uid
         }
 
-        Database.add(COLLECTION_NAME, 'uid', user).then(function(dbRes){
+        Database.add(COLLECTION_NAME, 'uid', user).then(function(){
             res.status(201).send({
                 user: user,
                 operation: 'create',
@@ -166,5 +166,15 @@ UsersController.update = function(req, res){
         res.status(500).send(err);
     });
 
+
+}
+
+
+UsersController.signin = function(req, res){
+    
+    Account.login(req.body.email, req.body.password).then(function([cookie, options]){
+        res.cookie('session', cookie, options);
+        res.sendStatus(200);
+    });
 
 }

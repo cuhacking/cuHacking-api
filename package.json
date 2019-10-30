@@ -21,6 +21,7 @@
     "bcrypt": "^3.0.6",
     "crypto-js": "^3.1.9-1",
     "express": "^4.17.1",
+    "firebase": "^7.2.1",
     "firebase-admin": "^7.3.0",
     "jquery": "^3.4.1",
     "mailchimp-api-v3": "^1.13.0",
