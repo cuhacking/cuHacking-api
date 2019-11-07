@@ -25,7 +25,7 @@ Account.create = function(email, password){
         
         // TODO: consider any email or password validation we want to do at the backend level
         fbAccount.createUserWithEmailAndPassword(email, password).then(function(user){
-            resolve(user.uid);
+            resolve(user.user.uid);
         }).catch(function(error){
             reject([error.code, error.message]);
         });
@@ -37,7 +37,7 @@ Account.create = function(email, password){
 }
 
 
-Account.login = function(email, password){
+Account.signin = function(email, password){ 
 
     let promise = new Promise(function(resolve, reject){
 
@@ -45,50 +45,92 @@ Account.login = function(email, password){
 
             return fbAccount.currentUser.getIdToken();
 
+        // }).then(function(token){
+
+        //     const expiry = 1000 * 60 * 60 * 24 * 1; // Last digit is number of days it's valid for
+        //     return fbAdmin.createSessionCookie(token.toString(), {expiry});
+
+        // }).then(function(cookie){
+
+        //     const options = {maxAge: expiry, httpOnly: true, secure: true};
+        //     resolve([cookie, options])
         }).then(function(token){
-
-            const expiry = 1000 * 60 * 60 * 24 * 1; // Last digit is number of days it's valid for
-            return fbAdmin.createSessionCookie(token.toString(), {expiry});
-
-        }).then(function(cookie){
-
-            const options = {maxAge: expiry, httpOnly: true, secure: true};
-            resolve([cookie, options])
-
+            resolve(token);
         }).catch(function(err){
             reject(err);
         });
 
     });
 
+    return promise;
+
 }
 
-// TODO: Replace auth in routes with this one
-Account.authenticate = function(role){
 
-    return function(req, res, next){
+Account.resetPassword = function(email){
 
-        const cookie = req.cookies.session || '';
+    let promise = new Promise(function(resolve, reject){
 
-        fbAdmin.verifySessionCookie(cookie, true /** checkRevoked */).then(function(token){
-            
-            return Database.search('Users', 'uid', token.uid);
-
-        }).then(function(user){
-
-            if(!res){
-                res.sendStatus(403);
-                return;
-            }
-        
-            if(ROLES[res.role] < ROLES[role]){
-                res.sendStatus(403);
-                return;
-            }
-        
-            next();
-
+        fbAccount.sendPasswordResetEmail(email).then(function(res){
+            resolve(res);
+        }).catch(function(err){
+            reject(err);
         });
-    }
+
+    });
+
+    return promise;
+}
+
+
+Account.revokeSession = function(token){
+
+    let promise = new Promise(function(resolve, reject){
+        fbAdmin.verifyIdToken(token).then(function(decodedToken){
+            fbAdmin.revokeRefreshTokens(decodedToken.sub).then(function(res){
+                resolve(res);
+            }).catch(function(err){
+                reject(err);
+            });
+        });
+
+    });
+
+    return promise;
 
 }
+
+// // TODO: Replace auth in routes with this one
+// Account.authenticate = function(role){
+
+//     return function(req, res, next){
+
+//         if(!req.cookies){
+//             res.sendStatus(403);
+//             return;
+//         }
+
+//         const cookie = req.cookies.session || '';
+
+//         fbAdmin.verifySessionCookie(cookie, true /** checkRevoked */).then(function(token){
+            
+//             return Database.search('Users', 'uid', token.uid);
+
+//         }).then(function(user){
+
+//             if(!res){
+//                 res.sendStatus(403);
+//                 return;
+//             }
+        
+//             if(ROLES[res.role] < ROLES[role]){
+//                 res.sendStatus(403);
+//                 return;
+//             }
+        
+//             next();
+
+//         });
+//     }
+
+// }

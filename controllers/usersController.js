@@ -1,21 +1,8 @@
 const Database  = require('../model/database');
 const Account   = require('../model/account');
 const UsersController = module.exports;
-const Authentication = require('../model/authentication');
 
 const COLLECTION_NAME = 'Users';
-
-const ALLOWED_ORIGIN = 'http://localhost:3000'; 
-
-UsersController.preflight = function(req, res) {
-
-    res.setHeader('Access-Control-Allow-Origin', ALLOWED_ORIGIN); 
-    res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS'); 
-    res.setHeader('Access-Control-Allow-Headers', 'authorization, content-type');  
-    res.sendStatus(200); 
-
-}
-
 
 UsersController.create = function(req, res){
 
@@ -26,8 +13,10 @@ UsersController.create = function(req, res){
             "role": "user",
             "uid": uid
         }
-
-        Database.add(COLLECTION_NAME, 'uid', user).then(function(){
+        
+        console.log("Account created.")
+        console.log(user)
+        Database.add(COLLECTION_NAME, 'email', user).then(function(){
             res.status(201).send({
                 user: user,
                 operation: 'create',
@@ -35,6 +24,7 @@ UsersController.create = function(req, res){
                 message: 'User successfully created'
             });
         }).catch(function(err){
+            console.log("Error with adding to db")
             res.status(500).send({
                 user: user,
                 operation: 'create',
@@ -42,14 +32,7 @@ UsersController.create = function(req, res){
                 message: err
             })
         });
-    }).catch(function(err){
-        res.status(500).send({
-            user: req.body.username,
-            operation: 'create',
-            status: 'failure',
-            message: err
-        });
-    });
+    })
 
 }
 
@@ -100,9 +83,9 @@ UsersController.get = function(req, res){
 
 
 UsersController.getByUid = function(req, res){
-    
+
     let uid = req.params.uid;
-    Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
+    Database.search(COLLECTION_NAME, 'uid', uid).then(function(databaseResult){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({
@@ -171,10 +154,35 @@ UsersController.update = function(req, res){
 
 
 UsersController.signin = function(req, res){
-    
-    Account.login(req.body.email, req.body.password).then(function([cookie, options]){
-        res.cookie('session', cookie, options);
-        res.sendStatus(200);
+
+    Account.signin(req.body.email, req.body.password).then(function(token){
+        res.status(200).send({
+            token: token    
+        });
     });
+
+}
+
+
+UsersController.signout = function(req, res){
+
+    let auth_header = req.get("authorization"); 
+
+    if(auth_header){
+        let token = auth_header.split(" ")[1]; // Remove the Bearer
+        Account.revokeSession(token).then(function(){
+            res.sendStatus(200);
+        }).catch(function(err){
+            res.status(500).send({
+                operation: "signout",
+                message: "Failed with error: " + err
+            });
+        });
+    } else {
+        res.status(500).send({
+            operation: "signout",
+            message: "No token provided in header"
+        });
+    }
 
 }

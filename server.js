@@ -3,8 +3,6 @@ const passport = require('passport');
 const Authentication = require('./model/authentication');
 const Database = require('./model/database');
 const Account = require('./model/account');
-const http = require('http');
-const https = require('https');
 
 const app = express();
 const routes = require('./routes/routes');
@@ -19,12 +17,12 @@ const firebase = require('firebase/app');
 const config = require('./config.json');  
 
 const env = process.env.NODE_ENV || "development";
-const PORT = config[env].port;
+const PORT = config[env].port || 8080;
 const API_ROOT = config[env].api_root;
 
 const serviceAccount = require('./' + config[env].firebase_key_file);
 
-require('firebase/database');
+require('firebase/auth');
 
 // Initialize Firebase admin SDK
 admin.initializeApp({
@@ -33,7 +31,16 @@ admin.initializeApp({
 });
 
 // Inititalize Firebase app SDK
-firebase.initializeApp(config[env].firebase_app_config);
+firebase.initializeApp({
+    apiKey: "AIzaSyCQijhDlC3SzfzUsuAncid7EEkGpcd5wn4",
+    authDomain: "firestore-warmup.firebaseapp.com",
+    databaseURL: "https://firestore-warmup.firebaseio.com",
+    projectId: "firestore-warmup",
+    storageBucket: "firestore-warmup.appspot.com",
+    messagingSenderId: "509159451945",
+    appId: "1:509159451945:web:b46738ffa17aa797"
+
+});
 
 // Middleware for handling JSON bodies
 app.use(express.json())
