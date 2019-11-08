@@ -44,7 +44,6 @@ UsersController.delete = function(req, res){
 
     if(!doc){
         res.status(404).send({
-            username: username,
             operation: 'delete',
             status: 'failed',
             message: 'User not found'
@@ -52,7 +51,6 @@ UsersController.delete = function(req, res){
     } else {
         Database.remove(COLLECTION_NAME, username).then(function(){
             res.status(200).send({
-                email: email,
                 operation: 'delete',
                 status: 'success',
                 message: 'User successfully deleted' 
@@ -89,7 +87,6 @@ UsersController.getByUid = function(req, res){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({
-                uid: uid,
                 operation: 'get',
                 status: 'unauthorized',
                 data: 'You are not authorized to view this user'
@@ -99,14 +96,12 @@ UsersController.getByUid = function(req, res){
 
         if(databaseResult){
             res.status(200).send({
-                uid: uid,
                 operation: 'get',
                 status: 'success',
                 data: databaseResult
             });
         } else {
             res.status(404).send({
-                uid: uid,
                 operation: 'get',
                 status: 'failed',
                 message: 'User not found'
@@ -127,7 +122,6 @@ UsersController.update = function(req, res){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({
-                uid: uid,
                 operation: 'update',
                 status: 'unauthorized',
                 data: 'You are not authorized to update this user'
@@ -137,7 +131,6 @@ UsersController.update = function(req, res){
         
         Database.update(COLLECTION_NAME, uid, req.body).then(function(){
             res.status(200).send({
-                uid: uid,
                 operation: 'update',
                 status: 'success'
             });
@@ -182,6 +175,65 @@ UsersController.signout = function(req, res){
         res.status(500).send({
             operation: "signout",
             message: "No token provided in header"
+        });
+    }
+
+}
+
+
+UsersController.resetPassword = function(req, res){
+
+    Account.resetPassword(req.body.email).then(function(res){
+        
+        res.status(200).send({
+            operation: "resetPassword",
+            status: "success",
+            message: "Password successfully reset"
+        });
+    }).catch(function(err){
+        res.status(500).send({
+            operation: "resetPassword",
+            status: "failure",
+            message: "Password reset failed"
+        });
+    });
+
+}
+
+
+UsersController.getProfile = function(req, res){
+
+    let auth_header = req.get("authorization"); 
+
+    if(auth_header){
+        let token = auth_header.split(" ")[1]; // Remove the Bearer
+        console.log(token);
+        Account.getUid(token).then(function(uid){
+
+            Database.get(COLLECTION_NAME, 'uid', uid).then(function(databaseResult){
+            
+                if(databaseResult){
+                    res.status(200).send({
+                        operation: 'get',
+                        status: 'success',
+                        data: databaseResult
+                    });
+                } else {
+                    res.status(404).send({
+                        operation: 'get',
+                        status: 'failed',
+                        message: 'User not found'
+                    });
+                }
+                
+            });
+
+        }).catch(function(err){
+            res.status(404).send({
+                operation: 'get',
+                status: 'failure',
+                message: 'Token was invalid'
+            });
         });
     }
 

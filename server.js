@@ -31,16 +31,7 @@ admin.initializeApp({
 });
 
 // Inititalize Firebase app SDK
-firebase.initializeApp({
-    apiKey: "AIzaSyCQijhDlC3SzfzUsuAncid7EEkGpcd5wn4",
-    authDomain: "firestore-warmup.firebaseapp.com",
-    databaseURL: "https://firestore-warmup.firebaseio.com",
-    projectId: "firestore-warmup",
-    storageBucket: "firestore-warmup.appspot.com",
-    messagingSenderId: "509159451945",
-    appId: "1:509159451945:web:b46738ffa17aa797"
-
-});
+firebase.initializeApp(config[env].firebase_account_config);
 
 // Middleware for handling JSON bodies
 app.use(express.json())

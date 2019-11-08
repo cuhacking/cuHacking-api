@@ -100,6 +100,20 @@ Account.revokeSession = function(token){
 
 }
 
+
+Account.getUid = function(token){
+
+    let promise = new Promise(function(resolve, reject){
+        fbAdmin.verifyIdToken(token, true).then(function(decodedToken){
+            resolve(decodedToken.uid);
+        }).catch(function(err){
+            reject("Error verifying token: " + err);
+        });
+    });
+
+    return promise;
+}
+
 // // TODO: Replace auth in routes with this one
 // Account.authenticate = function(role){
 
