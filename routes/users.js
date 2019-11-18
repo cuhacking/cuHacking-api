@@ -20,7 +20,7 @@ router.post('/signout', UsersController.signout);
 router.post('/resetPassword', UsersController.resetPassword);
 router.get('/profile', UsersController.getProfile);
 
-router.get('/:uid', Authentication.authenticate("user"), UsersController.getByUid);
+router.get('/:uid', Authentication.authenticate("user"), UsersController.getByEmail);
 router.patch('/:uid', Authentication.authenticate("user"), UsersController.update);
 router.delete('/:uid', Authentication.authenticate("admin"), UsersController.delete);
 
