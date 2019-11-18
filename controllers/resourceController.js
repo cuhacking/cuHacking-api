@@ -15,7 +15,9 @@ ResourceController.preflight = function(req, res) {
 
 }
 
-
+/**
+ * Gets the versions of all the resources
+ */
 ResourceController.getVersions = function(req, res){
 
     Database.getAll(COLLECTION_NAME).then(function(dbRes){
@@ -33,7 +35,9 @@ ResourceController.getVersions = function(req, res){
 
 }
 
-
+/**
+ * Gets the version of a specific resource
+ */
 ResourceController.getResourceVersion = function(req, res){
     
     let resource = req.params.resource;
@@ -59,8 +63,11 @@ ResourceController.getResourceVersion = function(req, res){
 
 }
 
-
-ResourceController.createMap = function(req, res){
+/**
+ * Create a new resource
+ * Expects a resource in the parameters (e.g. /resource/map)
+ */
+ResourceController.createResource = function(req, res){
 
     let resource = req.params.resource;
     Database.get(COLLECTION_NAME, resource).then(function(dbRes){
@@ -90,7 +97,10 @@ ResourceController.createMap = function(req, res){
 
 }
 
-
+/**
+ * Update a resource
+ * Expects a resource in the parameter (e.g. /resource/map)
+ */
 ResourceController.updateResource = function(req, res){
 
     let resource = req.params.resource;
@@ -114,9 +124,13 @@ ResourceController.updateResource = function(req, res){
 
 }
 
-
+/**
+ * Get a specific resource
+ * Expects a resource in the parameter (e.g. /resource/map)
+ */
 ResourceController.getResource = function(req, res){
     
+    let resource = req.params.resource;
     Database.get(COLLECTION_NAME, resource).then(function(getRes){
         res.status(201).send({
             resource: resource,
@@ -130,8 +144,11 @@ ResourceController.getResource = function(req, res){
 
 }
 
-
-ResourceController.deleteResource - function(req, res){
+/**
+ * Delete a resource
+ * Expects a resource in the parameter (e.g. /resource/map)
+ */
+ResourceController.deleteResource = function(req, res){
 
     let resource = req.params.resource;
     let doc = Database.get(COLLECTION_NAME, resource);
