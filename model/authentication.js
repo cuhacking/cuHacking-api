@@ -19,10 +19,9 @@ Authentication.init = function(admin){
             return done(null, false);
         }
 
-        fbAuth.verifyIdToken(apikey).then(function(decodedToken){
-            let uid = decodedToken.uid;
+        Authentication.getUid(apikey).then(function(uid){
 
-            Database.search('accounts', 'uid', uid).then(function(res){
+            Database.search('Users', 'uid', uid).then(function(res){
                 if(!res) {
                     return done(null, false);
                 }
@@ -75,3 +74,16 @@ passport.deserializeUser(function(uid, cb) {
     });
 
 });
+
+Authentication.getUid = function(token){
+    
+    let promise = new Promise(function(resolve, reject){
+        fbAuth.verifyIdToken(token).then(function(decodedToken){
+            resolve(decodedToken.uid);
+        }).catch(function(err){
+            reject("Error verifying token: " + err);
+        });
+    });
+
+    return promise;
+}
