@@ -1,5 +1,6 @@
 const Database  = require('../model/database');
 const Account   = require('../model/account');
+const User      = require('../model/user');
 const UsersController = module.exports;
 
 const COLLECTION_NAME = 'Users';
@@ -8,17 +9,18 @@ UsersController.create = function(req, res){
 
     Account.create(req.body.email, req.body.password).then(function(uid){
         //TODO: Decide on schema for accounts
-        let user = {
+        let userData = {
             "email": req.body.email,
             "role": "user",
             "uid": uid
         }
+
+        let user = User.create(userData);
         
-        console.log("Account created.")
-        console.log(user)
-        Database.add(COLLECTION_NAME, 'email', user).then(function(){
+        console.log("Account created with email: " + userData.email);
+        Database.add(COLLECTION_NAME, 'uid', user).then(function(){
             res.status(201).send({
-                user: user,
+                user: userData.email,
                 operation: 'create',
                 status: 'success',
                 message: 'User successfully created'
@@ -32,7 +34,7 @@ UsersController.create = function(req, res){
                 message: err
             })
         });
-    })
+    });
 
 }
 
@@ -65,6 +67,9 @@ UsersController.get = function(req, res){
 
     let limit = req.query.limit || 0; // If the limit query is set, use that, otherwise use 0
     Database.getAll(COLLECTION_NAME, limit).then(function(databaseResult){
+        for(let item of databaseResult){
+            delete item.uid;
+        }
         let data = {
             operation: 'get',
             status: 'success',
@@ -80,10 +85,10 @@ UsersController.get = function(req, res){
 }
 
 
-UsersController.getByUid = function(req, res){
+UsersController.getByEmail = function(req, res){
 
-    let uid = req.params.uid;
-    Database.search(COLLECTION_NAME, 'uid', uid).then(function(databaseResult){
+    let email = req.params.email;
+    Database.search(COLLECTION_NAME, 'email', email).then(function(databaseResult){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({
@@ -207,12 +212,12 @@ UsersController.getProfile = function(req, res){
 
     if(auth_header){
         let token = auth_header.split(" ")[1]; // Remove the Bearer
-        console.log(token);
         Account.getUid(token).then(function(uid){
 
-            Database.get(COLLECTION_NAME, 'uid', uid).then(function(databaseResult){
+            Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
             
                 if(databaseResult){
+                    delete databaseResult.uid; // Don't send uid to users
                     res.status(200).send({
                         operation: 'get',
                         status: 'success',

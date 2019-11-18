@@ -113,38 +113,3 @@ Account.getUid = function(token){
 
     return promise;
 }
-
-// // TODO: Replace auth in routes with this one
-// Account.authenticate = function(role){
-
-//     return function(req, res, next){
-
-//         if(!req.cookies){
-//             res.sendStatus(403);
-//             return;
-//         }
-
-//         const cookie = req.cookies.session || '';
-
-//         fbAdmin.verifySessionCookie(cookie, true /** checkRevoked */).then(function(token){
-            
-//             return Database.search('Users', 'uid', token.uid);
-
-//         }).then(function(user){
-
-//             if(!res){
-//                 res.sendStatus(403);
-//                 return;
-//             }
-        
-//             if(ROLES[res.role] < ROLES[role]){
-//                 res.sendStatus(403);
-//                 return;
-//             }
-        
-//             next();
-
-//         });
-//     }
-
-// }

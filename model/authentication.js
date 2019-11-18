@@ -1,7 +1,6 @@
 const passport = require('passport');
 const Strategy = require('passport-http-bearer').Strategy;
 const Database = require('./database');
-const bcrypt = require('bcrypt');
 const ROLES = {"public": 0, "user": 1, "admin": 2};
 
 let fbAuth;
@@ -42,28 +41,6 @@ Authentication.init = function(admin){
 }
 
 Authentication.authenticate = function(role){
-
-    // return function(req, res, next){
-    //     Authentication.getUid(token).then(function(uid){
-
-    //         return Database.search('Users', 'uid', uid);
-    
-    //     }).then(function(res){
-    
-    //         if(!res){
-    //             res.sendStatus(403);
-    //             return;
-    //         }
-    
-    //         if(ROLES[res.role] < ROLES[role]){
-    //             res.sendStatus(403);
-    //             return;
-    //         }
-    
-    //         next();
-    
-    //     });
-    // }
 
     return [passport.authenticate('bearer'), function(req, res, next){
  
