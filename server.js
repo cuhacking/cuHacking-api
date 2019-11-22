@@ -8,6 +8,7 @@ const https = require('https');
 const app = express();
 const routes = require('./routes/routes');
 const mailing_list = require('./routes/mailinglist');
+const schedule = require('./routes/schedule');
 const users = require('./routes/users');
 
 const swaggerUi = require('swagger-ui-express');
@@ -31,6 +32,14 @@ admin.initializeApp({
 app.use(express.json())
 app.use(passport.initialize());
 
+// Log each request the server receives
+app.use('*', (req, res, next) => {
+    console.log(`HTTP request received: ${req.method} -> ${req.originalUrl}`)
+    console.debug('Request Body:', req.body)
+    next()
+})
+
+// Initialize Firebase instances
 Authentication.init(admin);
 Database.init(admin);
 
@@ -40,6 +49,7 @@ app.options('*', mailing_list);
 app.use(API_ROOT, routes);
 app.use(API_ROOT + '/mailinglist/', mailing_list);
 app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
+app.use(API_ROOT + '/schedule/', schedule)
 app.use(API_ROOT + '/users/', users);
 
 // Start the server
