@@ -48,7 +48,7 @@ const MOCK_EVENTS = {
     endTime: (new Date(2019, 11, 7, 15, 30)).getTime(),
     type: ''
   }
-}
+};
 
 Schedule.all = () => {
   return {
@@ -60,5 +60,5 @@ Schedule.all = () => {
 
 Schedule.getEvent = id => {
   // return events[id]
-  return MOCK_EVENTS[id]
+  return MOCK_EVENTS[id];
 };
