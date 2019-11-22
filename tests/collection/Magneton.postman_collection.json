@@ -33,12 +33,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api",
+							"raw": "{{SERVER}}/api-dev/test-user-auth",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api"
+								"api-dev",
+								"test-user-auth"
 							]
 						}
 					},
@@ -62,12 +63,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{SERVER}}/",
+							"raw": "{{SERVER}}/api-dev",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								""
+								"api-dev"
 							]
 						}
 					},
@@ -113,15 +114,15 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"ryanlydev+1234@gmail.com\"\n}"
+							"raw": "{\n    \"email\": \"ryanlydev@gmail.com\"\n}"
 						},
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/subscribe",
+							"raw": "{{SERVER}}/api-dev/mailinglist/subscribe",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"subscribe"
 							]
@@ -162,12 +163,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/db/{{EMAIL_ADDED}}",
+							"raw": "{{SERVER}}/api-dev/mailinglist/db/{{EMAIL_ADDED}}",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"db",
 								"{{EMAIL_ADDED}}"
@@ -209,12 +210,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/mailchimp/{{EMAIL_ADDED}}",
+							"raw": "{{SERVER}}/api-dev/mailinglist/mailchimp/{{EMAIL_ADDED}}",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"mailchimp",
 								"{{EMAIL_ADDED}}"
@@ -247,15 +248,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/db/{{EMAIL_ADDED}}",
+							"raw": "{{SERVER}}/api-dev/mailinglist/db/ryanlydev+5@gmail.com",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"db",
-								"{{EMAIL_ADDED}}"
+								"ryanlydev+5@gmail.com"
 							]
 						}
 					},
@@ -285,366 +286,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/mailchimp/{{EMAIL_ADDED}}",
+							"raw": "{{SERVER}}/api-dev/mailinglist/mailchimp/ryanlydev+6@gmail.com",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"mailchimp",
-								"{{EMAIL_ADDED}}"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "2. Get All Elements With Limit",
-			"item": [
-				{
-					"name": "1. Add Element (1)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
-								"exec": [
-									"tests[\"Status code is 201\"] = responseCode.code === 201;",
-									"",
-									"let jsonData = JSON.parse(responseBody);",
-									"",
-									"postman.setEnvironmentVariable('EMAIL_ADDED1', jsonData.email);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{API_KEY}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"ryanlydev+1@gmail.com\"\n}"
-						},
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/subscribe",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"subscribe"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Add Element (2)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
-								"exec": [
-									"tests[\"Status code is 201\"] = responseCode.code === 201;",
-									"",
-									"let jsonData = JSON.parse(responseBody);",
-									"",
-									"postman.setEnvironmentVariable('EMAIL_ADDED2', jsonData.email);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{API_KEY}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"ryanlydev+2@gmail.com\"\n}"
-						},
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/subscribe",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"subscribe"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Add Element (3)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6ddbb8c8-b635-4146-b8af-0bbe822c591d",
-								"exec": [
-									"tests[\"Status code is 201\"] = responseCode.code === 201;",
-									"",
-									"let jsonData = JSON.parse(responseBody);",
-									"",
-									"postman.setEnvironmentVariable('EMAIL_ADDED3', jsonData.email);"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"name": "Content-Type",
-								"type": "text",
-								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {{API_KEY}}",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"email\": \"ryanlydev+3@gmail.com\"\n}"
-						},
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/subscribe",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"subscribe"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "2. Get A Max of 2 Elements",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "5f418a31-c7b4-44c7-9190-06a0dd3931f5",
-								"exec": [
-									"tests[\"Status code is 200\"] = responseCode.code === 200;",
-									"",
-									"let jsonData = JSON.parse(responseBody);",
-									"",
-									"tests[\"Number of items returned is no more than the limit\"] = jsonData.items <= 2;"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{API_KEY}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/db?limit=2",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"db"
-							],
-							"query": [
-								{
-									"key": "limit",
-									"value": "2"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Cleanup: Delete Email from DB (1)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{API_KEY}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED1}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"db",
-								"{{EMAIL_ADDED1}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Cleanup: Delete Email from Mailchimp (1)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{API_KEY}}"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED1}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"mailchimp",
-								"{{EMAIL_ADDED1}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Cleanup: Delete Email from DB (2)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{API_KEY}}"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED2}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"db",
-								"{{EMAIL_ADDED2}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Cleanup: Delete Email from Mailchimp (2)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{API_KEY}}"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED2}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"mailchimp",
-								"{{EMAIL_ADDED2}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Cleanup: Delete Email from DB (3)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer {{API_KEY}}",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/db/{{EMAIL_ADDED3}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"db",
-								"{{EMAIL_ADDED3}}"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "1. Cleanup: Delete Email from Mailchimp (3)",
-					"request": {
-						"method": "DELETE",
-						"header": [
-							{
-								"key": "Authorization",
-								"type": "text",
-								"value": "Bearer {{API_KEY}}"
-							}
-						],
-						"url": {
-							"raw": "{{SERVER}}/mailinglist/mailchimp/{{EMAIL_ADDED3}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"mailinglist",
-								"mailchimp",
-								"{{EMAIL_ADDED3}}"
+								"ryanlydev+6@gmail.com"
 							]
 						}
 					},
@@ -794,12 +444,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api",
+							"raw": "{{SERVER}}/api-dev",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api"
+								"api-dev"
 							]
 						}
 					},
@@ -930,12 +580,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/db/{{EMAIL_TO_CHECK}}?",
+							"raw": "{{SERVER}}/api-dev/mailinglist/db/{{EMAIL_TO_CHECK}}?",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"db",
 								"{{EMAIL_TO_CHECK}}"
@@ -999,12 +649,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/mailchimp/{{EMAIL_TO_CHECK}}?",
+							"raw": "{{SERVER}}/api-dev/mailinglist/mailchimp/{{EMAIL_TO_CHECK}}?",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"mailchimp",
 								"{{EMAIL_TO_CHECK}}"
@@ -1063,21 +713,15 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/db/{{EMAIL_TO_DELETE}}",
+							"raw": "{{SERVER}}/api-dev/mailinglist/db/{{EMAIL_TO_DELETE}}",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"db",
 								"{{EMAIL_TO_DELETE}}"
-							],
-							"query": [
-								{
-									"key": "",
-									"value": ""
-								}
 							]
 						}
 					},
@@ -1126,12 +770,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/mailinglist/mailchimp/{{EMAIL_TO_DELETE}}",
+							"raw": "{{SERVER}}/api-dev/mailinglist/mailchimp/{{EMAIL_TO_DELETE}}",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"mailinglist",
 								"mailchimp",
 								"{{EMAIL_TO_DELETE}}"
@@ -1159,7 +803,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"test@test.com\",\n\t\"password\": \"password\"\n}",
+							"raw": "{\n\t\"email\": \"testing1@test.com\",\n\t\"password\": \"password\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1167,12 +811,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{SERVER}}/api/users/register",
+							"raw": "{{SERVER}}/api-dev/users/register",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"users",
 								"register"
 							]
@@ -1208,7 +852,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"testing@test.com\",\n\t\"password\": \"password\"\n}",
+							"raw": "{\n\t\"email\": \"testing1@test.com\",\n\t\"password\": \"password\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1216,12 +860,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{SERVER}}/api/users/signin",
+							"raw": "{{SERVER}}/api-dev/users/signin",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"users",
 								"signin"
 							]
@@ -1233,14 +877,20 @@
 					"name": "Sign-out",
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{SERVER}}/api/users/signout",
+							"raw": "{{SERVER}}/api-dev/users/signout",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"users",
 								"signout"
 							]
@@ -1260,12 +910,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{SERVER}}/api/users/profile",
+							"raw": "{{SERVER}}/api-dev/users/profile",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
-								"api",
+								"api-dev",
 								"users",
 								"profile"
 							]
