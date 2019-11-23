@@ -1,9 +1,78 @@
 const Database  = require('../model/database');
 const Account   = require('../model/account');
 const User      = require('../model/user');
+
+
+const APPLICATION_STATUS = {
+    UNSUBMITTED: "unsubmitted",
+    SUBMITTED: "submitted",
+    ACCEPTED1: "accepted-1",
+    ACCEPTED2: "accepted-2",
+    ACCEPTED3: "accepted-3",
+    REVIEWED: "reviewed",
+    WAITLIST1: "waitlist-1",
+    WAITLIST2: "waitlist-2"
+};
+
+const USER_SCHEMA = {
+    email: null,
+    role: "user",
+    uid: null,
+    rsvp: {
+    },
+    application: {
+        status: APPLICATION_STATUS.UNSUBMITTED,
+        basicInfo: {
+            firstName: null, 
+            lastName: null,
+            gender: null,
+            race: null,
+            emergencyPhone: null
+        },
+        personalInfo: {
+            school: null,
+            major: null,
+            minor: null,
+            degree: null,
+            expectedGraduation: null,
+            cityOfOrigin: null,
+            tShirtSize: null,
+            dietaryRestrictions: null,
+            wantsShuttle: null
+        },
+        skills: {
+            numHackathons: null,
+            selfTitle: null,
+            accomplishmentStatement: null,
+            challengeStatement: null
+        },
+        profile: {
+            github: null,
+            linkedin: null,
+            website: null,
+            soughtPosition: null,
+            resume: null
+        },
+        terms: {
+            codeOfConduct: false,
+            privacyPolicy: false,
+            contestTerms: false
+        }
+    }
+};
+
 const UsersController = module.exports;
 
 const COLLECTION_NAME = 'Users';
+
+function createUser(input){
+    let user = USER_SCHEMA;
+    return Object.assign(user, input); 
+}
+
+function modifyUser(user, input){
+    return Object.assign(user, input);
+}
 
 UsersController.create = function(req, res){
 
@@ -15,7 +84,7 @@ UsersController.create = function(req, res){
             "uid": uid
         }
 
-        let user = User.create(userData);
+        let user = createUser(userData);
         
         console.log("Account created with email: " + userData.email);
         Database.add(COLLECTION_NAME, 'uid', user).then(function(){

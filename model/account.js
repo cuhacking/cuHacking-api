@@ -5,9 +5,6 @@
  * 
  */
 
-const Database = require('./database');
-const ROLES = {"public": 0, "user": 1, "admin": 2};
-
 let fbAccount, fbAdmin;
 
 var Account = module.exports;
@@ -23,7 +20,6 @@ Account.create = function(email, password){
     
     let promise = new Promise(function(resolve, reject){
         
-        // TODO: consider any email or password validation we want to do at the backend level
         fbAccount.createUserWithEmailAndPassword(email, password).then(function(user){
             resolve(user.user.uid);
         }).catch(function(error){
@@ -45,15 +41,6 @@ Account.signin = function(email, password){
 
             return fbAccount.currentUser.getIdToken();
 
-        // }).then(function(token){
-
-        //     const expiry = 1000 * 60 * 60 * 24 * 1; // Last digit is number of days it's valid for
-        //     return fbAdmin.createSessionCookie(token.toString(), {expiry});
-
-        // }).then(function(cookie){
-
-        //     const options = {maxAge: expiry, httpOnly: true, secure: true};
-        //     resolve([cookie, options])
         }).then(function(token){
             resolve(token);
         }).catch(function(err){
