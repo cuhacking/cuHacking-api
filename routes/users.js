@@ -13,10 +13,15 @@ const MailListController = require('../controllers/mailListController');
 router.options('*', MailListController.preflight); 
 
 router.get('/', Authentication.authenticate("admin"), UsersController.get);
-router.post('/', UsersController.create);
 
-router.get('/:username', Authentication.authenticate("user"), UsersController.getByUid);
-router.patch('/:username', Authentication.authenticate("user"), UsersController.update);
-router.delete('/:username', Authentication.authenticate("admin"), UsersController.delete);
+router.post('/register', UsersController.create);
+router.post('/signin', UsersController.signin);
+router.post('/signout', UsersController.signout);
+router.post('/resetPassword', UsersController.resetPassword);
+router.get('/profile', UsersController.getProfile);
+
+router.get('/:uid', Authentication.authenticate("user"), UsersController.getByEmail);
+router.patch('/:uid', Authentication.authenticate("user"), UsersController.update);
+router.delete('/:uid', Authentication.authenticate("admin"), UsersController.delete);
 
 module.exports = router;

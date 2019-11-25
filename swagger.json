@@ -182,7 +182,7 @@
               "type": "object",
               "required": [
                 "username",
-                "token"
+                "password"
               ],
               "properties": {
                 "username": {
@@ -411,6 +411,127 @@
         }
       }
     },
+    "/users/signin": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Signs in a user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully signed in"
+          },
+          "403": {
+            "description": "Authentication failure"
+          }
+        }
+      }
+    },
+    "/users/signout": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Signs out a user and revokes their session",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully signed out"
+          },
+          "500": {
+            "description": "Error signing out"
+          }
+        }
+      }
+    },
+    "/users/passwordReset": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Sends a password reset email",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Password reset email successfully sent"
+          },
+          "500": {
+            "description": "Error sending password reset email"
+          }
+        }
+      }
+    },
+    "/users/profile": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Gets the profile of the currently logged in user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "uid": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/schedule": {
       "get": {
         "tags": [
@@ -573,7 +694,7 @@
   "securityDefinitions": {
     "magneton_auth": {
       "type": "oauth2",
-      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "authorizationUrl": "http://cuhacking.com/users/signin",
       "flow": "implicit",
       "scopes": {
         "user": "Access own data",

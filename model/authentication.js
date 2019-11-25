@@ -1,7 +1,6 @@
 const passport = require('passport');
 const Strategy = require('passport-http-bearer').Strategy;
 const Database = require('./database');
-const bcrypt = require('bcrypt');
 const ROLES = {"public": 0, "user": 1, "admin": 2};
 
 let fbAuth;
@@ -36,7 +35,6 @@ Authentication.init = function(admin){
             console.log("Error verifying token");
             return done(null, false);
         });
-    
 
     
     }));
@@ -54,7 +52,7 @@ Authentication.authenticate = function(role){
 
         next();
     }]
-};
+}
 
 passport.serializeUser(function(user, cb) {
     cb(null, user.uid);
@@ -76,9 +74,9 @@ passport.deserializeUser(function(uid, cb) {
 });
 
 Authentication.getUid = function(token){
-    
+
     let promise = new Promise(function(resolve, reject){
-        fbAuth.verifyIdToken(token).then(function(decodedToken){
+        fbAuth.verifyIdToken(token, true).then(function(decodedToken){
             resolve(decodedToken.uid);
         }).catch(function(err){
             reject("Error verifying token: " + err);
