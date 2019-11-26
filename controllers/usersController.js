@@ -74,9 +74,8 @@ function modifyUser(user, input){
     return Object.assign(user, input);
 }
 
-
 function getUidFromHeader(header){
-    let token = header.split(" ")[1]; // Remove the Bearer
+    let token = header.split(" ")[1]; // Remove the "Bearer"
     return Account.getUid(token);
 }
 
@@ -330,7 +329,7 @@ UsersController.getProfile = function(req, res){
 /**
  * Helper function to modify the user's application in the database
  * 
- * @param {String} header - the Authorization header of the request
+ * @param {String} header - the Authorization header of the request (needed for the token)
  * @param {Object} data - the body of the POST request (i.e. req.body) 
  */
 function editApplication(header, data){
@@ -349,10 +348,11 @@ function editApplication(header, data){
                     let app = {};
                     if(databaseResult.application){ // If user has application data in their profile
                         app = modifyUser(databaseResult.application, data);
-                    } else { // If user has no application data in their profile (this shouldn't happen)
+                    } else { // If user has no application data in their profile (this shouldn't happen, except for test accounts)
                         app = modifyUser(USER_SCHEMA.application, data);                   
                     }
     
+                    // Save modified user and update database
                     databaseResult.application = app;
     
                     Database.update(COLLECTION_NAME, uid, databaseResult).then(function(){
@@ -405,7 +405,7 @@ UsersController.submitApplication = function(req, res){
     }).then(function(){
         res.sendStatus(200);
     }).catch(function(err){
-        let errCode = err.code || 500; // Use code if it's passed down from editApplication, otherwise return a generic 500
+        let errCode = err.code || 500; // Use response code if it's passed down from editApplication, otherwise return a generic 500
         res.status(errCode).send(err);
     });
 
@@ -419,6 +419,8 @@ UsersController.getApplication = function(req, res){
 
         Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
         
+            // Check that the user has an application
+            // They should always have one, except for testing accounts
             if(databaseResult && databaseResult.application){
                 res.status(200).send({
                     operation: 'getApplication',
