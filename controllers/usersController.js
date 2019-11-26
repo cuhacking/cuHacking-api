@@ -55,8 +55,7 @@ const USER_SCHEMA = {
         },
         terms: {
             codeOfConduct: false,
-            privacyPolicy: false,
-            contestTerms: false
+            privacyPolicy: false
         }
     }
 };

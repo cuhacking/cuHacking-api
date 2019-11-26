@@ -907,9 +907,6 @@
               },
               "privacyPolicy": {
                 "type": "boolean"
-              },
-              "contestTerms": {
-                "type": "boolean"
               }
             }
           }
