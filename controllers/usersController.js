@@ -84,6 +84,9 @@ function validateApplication(app){
     return app.status && Object.values(APPLICATION_STATUS).includes(app.status);
 }
 
+function modifyUser(user, input){
+    return Object.assign(user, input);
+}
 
 UsersController.create = function(req, res){
 
@@ -106,6 +109,7 @@ UsersController.create = function(req, res){
                 message: 'User successfully created'
             });
         }).catch(function(err){
+            console.log("Error with adding to db")
             res.status(500).send({
                 user: user,
                 operation: 'create',
