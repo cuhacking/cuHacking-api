@@ -245,3 +245,52 @@ Mail.unsubscribe = function(list, email){
     return promise;
 
 }
+
+
+/**
+ * Add a tag to a user in Mailchimp
+ * Subscribes them to the mailing list if they are not already subscribed
+ */
+Mail.addTag = function(list, email, tag){
+
+    let promise = new Promise(function(resolve, reject){
+
+        Mail.getList(list).then(function(resList){
+
+            return mailchimp.post('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex') + '/tags', {
+                "tags": [{
+                    "name": tag,
+                    "status": "active"
+                }]
+            });
+
+        }).then(function(res){
+            resolve(res);
+        }).catch(function(err){
+
+            // If 404, user is likely not subscribed. Subscribe them, then add the tag
+            if(err.status === 404){
+                Mail.subscribe(list, email).then(function(){
+                    return Mail.getList(list);
+                }).then(function(resList){
+                    return mailchimp.post('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex') + '/tags', {
+                        "tags": [{
+                            "name": tag,
+                            "status": "active"
+                        }]
+                    });
+                }).then(function(res){
+                    resolve(res);
+                }).catch(function(subscribeErr){
+                    reject(subscribeErr);
+                });
+            } else {
+                reject(err);
+            }
+        });
+
+    });
+
+    return promise;
+
+}

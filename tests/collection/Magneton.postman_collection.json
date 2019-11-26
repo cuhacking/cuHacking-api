@@ -925,6 +925,309 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "6. Applications",
+			"item": [
+				{
+					"name": "Sign-in",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "59a77d99-2151-43ba-8136-908a95193e54",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const req = JSON.parse(pm.request.body);",
+									"",
+									"pm.environment.set(\"API_KEY\", jsonData.token);",
+									"pm.environment.set(\"email\", req.email);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"testing1@test.com\",\n\t\"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/users/signin",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"users",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Profile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "506c63a3-1ad1-4f61-aef2-d7194a9723f4",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/users/profile",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"users",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save Application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "143ccb13-b49e-47f8-af31-a52c1d68e3b5",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": \"unsubmitted\",\n    \"basicInfo\": {\n        \"firstName\": \"Jane\",\n        \"lastName\": \"Doe\",\n        \"gender\": \"female\",\n        \"race\": \"human\",\n        \"emergencyPhone\": \"911\"\n    },\n    \"personalInfo\": {\n        \"school\": \"UOttawa\",\n        \"major\": \"Eng\",\n        \"minor\": \"none\",\n        \"degree\": \"none\",\n        \"expectedGraduation\": \"2021\",\n        \"cityOfOrigin\": \"Ottawa\",\n        \"tShirtSize\": \"M\",\n        \"dietaryRestrictions\": \"meat\",\n        \"wantsShuttle\": false\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/users/application/save",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"users",
+								"application",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Submit Application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3466b608-2894-49f8-9293-1c51266338f2",
+								"exec": [
+									"const req = JSON.parse(pm.request.body);",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.environment.set(\"application\", JSON.stringify(req));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"status\": \"submitted\",\r\n        \"basicInfo\": {\r\n            \"firstName\": \"a\", \r\n            \"lastName\": \"a\",\r\n            \"gender\": \"a\",\r\n            \"race\": \"a\",\r\n            \"emergencyPhone\": \"a\"\r\n        },\r\n        \"personalInfo\": {\r\n            \"school\": \"a\",\r\n            \"major\": \"a\",\r\n            \"minor\": \"a\",\r\n            \"degree\": \"a\",\r\n            \"expectedGraduation\": \"a\",\r\n            \"cityOfOrigin\": \"a\",\r\n            \"tShirtSize\": \"a\",\r\n            \"dietaryRestrictions\": \"a\",\r\n            \"wantsShuttle\": \"a\"\r\n        },\r\n        \"skills\": {\r\n            \"numHackathons\": \"a\",\r\n            \"selfTitle\": \"a\",\r\n            \"accomplishmentStatement\": \"a\",\r\n            \"challengeStatement\": \"a\"\r\n        },\r\n        \"profile\": {\r\n            \"github\": \"a\",\r\n            \"linkedin\": \"a\",\r\n            \"website\": \"a\",\r\n            \"soughtPosition\": \"a\",\r\n            \"resume\": \"a\"\r\n        },\r\n        \"terms\": {\r\n            \"codeOfConduct\": true,\r\n            \"privacyPolicy\": true,\r\n            \"contestTerms\": true\r\n        }\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/users/application/submit",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"users",
+								"application",
+								"submit"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Application",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "dc7aaa40-2063-4015-8656-cb06685f56b9",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Application data is correct\", function(){",
+									"    pm.expect(jsonData.data).to.deep.equal(JSON.parse(pm.environment.get(\"application\")));",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/users/application",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"users",
+								"application"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Mailchimp Tag",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "cdd3e4d3-5232-400d-8249-346ad774fb0c",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Tag was correctly added\", function(){",
+									"    // Get the names of all the tags",
+									"    let tags = jsonData.result.tags.map(tag => tag.name);",
+									"    pm.expect(tags).to.include(\"applied\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/mailinglist/ryanlydev@gmail.com",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"mailinglist",
+								"ryanlydev@gmail.com"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	]
 }

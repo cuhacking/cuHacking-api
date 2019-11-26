@@ -1,6 +1,6 @@
 const Database  = require('../model/database');
 const Account   = require('../model/account');
-const User      = require('../model/user');
+const Mail      = require('../model/mail');
 
 
 const APPLICATION_STATUS = {
@@ -61,9 +61,9 @@ const USER_SCHEMA = {
     }
 };
 
-const UsersController = module.exports;
-
 const COLLECTION_NAME = 'Users';
+const MAILING_LIST = 'MailingList';
+const UsersController = module.exports;
 
 function createUser(input){
     let user = USER_SCHEMA;
@@ -73,6 +73,17 @@ function createUser(input){
 function modifyUser(user, input){
     return Object.assign(user, input);
 }
+
+
+function getUidFromHeader(header){
+    let token = header.split(" ")[1]; // Remove the Bearer
+    return Account.getUid(token);
+}
+
+function validateApplication(app){
+    return app.status && Object.values(APPLICATION_STATUS).includes(app.status);
+}
+
 
 UsersController.create = function(req, res){
 
@@ -95,7 +106,6 @@ UsersController.create = function(req, res){
                 message: 'User successfully created'
             });
         }).catch(function(err){
-            console.log("Error with adding to db")
             res.status(500).send({
                 user: user,
                 operation: 'create',
@@ -278,37 +288,155 @@ UsersController.resetPassword = function(req, res){
 UsersController.getProfile = function(req, res){
 
     let auth_header = req.get("authorization"); 
+    getUidFromHeader(auth_header).then(function(uid){
 
-    if(auth_header){
-        let token = auth_header.split(" ")[1]; // Remove the Bearer
-        Account.getUid(token).then(function(uid){
-
-            Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
+        Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
+        
+            if(databaseResult){
+                delete databaseResult.uid; // Don't send uid to users
+                res.status(200).send({
+                    operation: 'get',
+                    status: 'success',
+                    data: databaseResult
+                });
+            } else {
+                res.status(404).send({
+                    operation: 'get',
+                    status: 'failed',
+                    message: 'User not found'
+                });
+            }
             
+        });
+
+    }).catch(function(err){
+        res.status(404).send({
+            operation: 'get',
+            status: 'failure',
+            message: 'Token was invalid'
+        });
+    });
+
+}
+
+/**
+ * Applications
+ */
+
+/**
+ * Helper function to modify the user's application in the database
+ * 
+ * @param {String} header - the Authorization header of the request
+ * @param {Object} data - the body of the POST request (i.e. req.body) 
+ */
+function editApplication(header, data){
+    
+    let promise = new Promise(function(resolve, reject){
+
+        if(!validateApplication(data)){
+            reject({code: 400, message: "Application was invalid"});
+        }
+
+        getUidFromHeader(header).then(function(uid){
+    
+            Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
+    
                 if(databaseResult){
-                    delete databaseResult.uid; // Don't send uid to users
-                    res.status(200).send({
-                        operation: 'get',
-                        status: 'success',
-                        data: databaseResult
+                    let app = {};
+                    if(databaseResult.application){ // If user has application data in their profile
+                        app = modifyUser(databaseResult.application, data);
+                    } else { // If user has no application data in their profile (this shouldn't happen)
+                        app = modifyUser(USER_SCHEMA.application, data);                   
+                    }
+    
+                    databaseResult.application = app;
+    
+                    Database.update(COLLECTION_NAME, uid, databaseResult).then(function(){
+                        resolve({code: 200, message: "Application successfully saved", uid: uid});
+                    }).catch(function(err){
+                        reject({code: 500, message: "Application could not be saved due to: " + err});
                     });
                 } else {
-                    res.status(404).send({
-                        operation: 'get',
-                        status: 'failed',
-                        message: 'User not found'
-                    });
+                    reject({code: 404, message: 'User not found in database'});
                 }
                 
+            }).catch(function(err){
+                reject({code: 500, message: "User could not be found due to: " + err});
             });
-
+    
         }).catch(function(err){
-            res.status(404).send({
-                operation: 'get',
-                status: 'failure',
-                message: 'Token was invalid'
-            });
+            reject({code: 400, message: 'Token was invalid; Message: ' + err})
         });
-    }
+
+    });
+
+    return promise;
+}
+
+/**
+ * Saves the application data to the user's profile
+ */
+UsersController.saveApplication = function(req, res){
+
+    editApplication(req.get("authorization"), req.body).then(function(result){
+        res.sendStatus(result.code);
+    }).catch(function(err){
+        res.status(err.code).send({
+            message: err.message
+        });
+    });
+
+}
+
+/**
+ * Saves the user's application, then handles additional logic which occurs after submitting an application
+ * e.g. sending a confirmation
+ */
+UsersController.submitApplication = function(req, res){
+
+    editApplication(req.get("authorization"), req.body).then(function(result){
+        return Database.get(COLLECTION_NAME, result.uid);
+    }).then(function(dbRes){
+        return Mail.addTag(MAILING_LIST, dbRes.email, "applied");
+    }).then(function(){
+        res.sendStatus(200);
+    }).catch(function(err){
+        let errCode = err.code || 500; // Use code if it's passed down from editApplication, otherwise return a generic 500
+        res.status(errCode).send(err);
+    });
+
+}
+
+
+UsersController.getApplication = function(req, res){
+
+    let auth_header = req.get("authorization"); 
+    getUidFromHeader(auth_header).then(function(uid){
+
+        Database.get(COLLECTION_NAME, uid).then(function(databaseResult){
+        
+            if(databaseResult && databaseResult.application){
+                res.status(200).send({
+                    operation: 'getApplication',
+                    status: 'success',
+                    data: databaseResult.application
+                });
+            } else {
+                res.status(404).send({
+                    operation: 'get',
+                    status: 'failed',
+                    message: 'User not found'
+                });
+            }
+            
+        });
+
+    }).catch(function(err){
+        res.status(404).send({
+            operation: 'get',
+            status: 'failure',
+            message: 'Token was invalid; Message: ' + err
+        });
+    });
 
 }

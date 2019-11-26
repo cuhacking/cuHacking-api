@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "This is the API for cuHacking 2020.",
-    "version": "1.0.2",
+    "version": "1.1-dev",
     "title": "Magneton (cuHacking 2020 API)",
     "license": {
       "name": "Apache 2.0",
@@ -19,6 +19,14 @@
     {
       "name": "Users",
       "description": "Handles users and their accounts"
+    },
+    {
+      "name": "Schedule",
+      "description": "The event schedule"
+    },
+    {
+      "name": "Updates",
+      "description": "The event's announcements"
     }
   ],
   "schemes": [
@@ -515,6 +523,164 @@
                     },
                     "uid": {
                       "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Retrieve the event schedule",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                },
+                "events": {
+                  "type": "object",
+                  "properties": {
+                    "id141": {
+                      "type": "object",
+                      "properties": {
+                        "locationName": {
+                          "type": "string"
+                        },
+                        "locationId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "startTime": {
+                          "type": "integer"
+                        },
+                        "endTime": {
+                          "type": "number"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/{id}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Get a single event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "The UID assigned by firebase which represents the user."
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Event successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "locationName": {
+                  "type": "string"
+                },
+                "locationId": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "startTime": {
+                  "type": "string"
+                },
+                "endTime": {
+                  "type": "number"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Event was not found"
+          }
+        }
+      }
+    },
+    "/updates": {
+      "get": {
+        "tags": [
+          "Updates"
+        ],
+        "summary": "Retrieve the announcement feed. Comes with a version number that indicates how new the information is. The larger the number, the newer it is.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The annoucments have been retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                },
+                "updates": {
+                  "type": "object",
+                  "properties": {
+                    "id123": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "locationId": {
+                          "type": "string"
+                        },
+                        "deliveryTime": {
+                          "type": "number"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        }
+                      }
                     }
                   }
                 }
