@@ -2,15 +2,15 @@
   "swagger": "2.0",
   "info": {
     "description": "This is the API for cuHacking 2020.",
-    "version": "1.1-dev",
+    "version": "1.2-dev",
     "title": "Magneton (cuHacking 2020 API)",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host": "api.cuhacking.com",
-  "basePath": "/api",
+  "host": "cuhacking.com",
+  "basePath": "/api-dev",
   "tags": [
     {
       "name": "Mailing List",
@@ -27,6 +27,10 @@
     {
       "name": "Updates",
       "description": "The event's announcements"
+    },
+    {
+      "name": "Applications",
+      "description": "Applications for the event"
     }
   ],
   "schemes": [
@@ -689,6 +693,98 @@
           }
         }
       }
+    },
+    "/users/application": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Gets the application for the current user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's application was successfully retrieved",
+            "schema": {
+              "$ref": "#/components/schemas/Application"
+            }
+          },
+          "404": {
+            "description": "The user could not be found"
+          }
+        }
+      }
+    },
+    "/users/application/save": {
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Saves the users's application",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Can be a partial version of this schema  (e.g. you can submit just the basicInfo, or just the status, etc.)",
+            "schema": {
+              "$ref": "#/components/schemas/Application"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's application was successfully saved"
+          },
+          "400": {
+            "description": "User's token or input data waS invalid"
+          },
+          "404": {
+            "description": "User could not be found"
+          },
+          "500": {
+            "description": "Error saving the application"
+          }
+        }
+      }
+    },
+    "/users/application/submit": {
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Submits the users's application",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Can be a partial version of this schema  (e.g. you can submit just the basicInfo, or just the status, etc.) Make sure that the status is \"submitted\"",
+            "schema": {
+              "$ref": "#/components/schemas/Application"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's application was successfully submitted"
+          },
+          "400": {
+            "description": "User's token or input data waS invalid"
+          },
+          "404": {
+            "description": "User could not be found"
+          },
+          "500": {
+            "description": "Error saving the application"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
@@ -705,5 +801,120 @@
   "externalDocs": {
     "description": "Find out more about Swagger",
     "url": "http://swagger.io"
+  },
+  "components": {
+    "schemas": {
+      "Application": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "basicInfo": {
+            "type": "object",
+            "properties": {
+              "firstName": {
+                "type": "string"
+              },
+              "lastName": {
+                "type": "string"
+              },
+              "gender": {
+                "type": "string"
+              },
+              "race": {
+                "type": "string"
+              },
+              "emergencyPhone": {
+                "type": "string"
+              }
+            }
+          },
+          "personalInfo": {
+            "type": "object",
+            "properties": {
+              "school": {
+                "type": "string"
+              },
+              "major": {
+                "type": "string"
+              },
+              "minor": {
+                "type": "string"
+              },
+              "degree": {
+                "type": "string"
+              },
+              "expectedGraduation": {
+                "type": "number"
+              },
+              "cityOfOrigin": {
+                "type": "string"
+              },
+              "tShirtSize": {
+                "type": "string"
+              },
+              "dietaryRestrictions": {
+                "type": "string"
+              },
+              "wantsShuttle": {
+                "type": "boolean"
+              }
+            }
+          },
+          "skills": {
+            "type": "object",
+            "properties": {
+              "numHackathons": {
+                "type": "number"
+              },
+              "selfTitle": {
+                "type": "string"
+              },
+              "accomplishmentStatement": {
+                "type": "string"
+              },
+              "challengeStatement": {
+                "type": "string"
+              }
+            }
+          },
+          "profile": {
+            "type": "object",
+            "properties": {
+              "gitHub": {
+                "type": "string"
+              },
+              "linkedin": {
+                "type": "string"
+              },
+              "website": {
+                "type": "string"
+              },
+              "soughtPosition": {
+                "type": "string"
+              },
+              "resume": {
+                "type": "string"
+              }
+            }
+          },
+          "terms": {
+            "type": "object",
+            "properties": {
+              "codeOfConduct": {
+                "type": "boolean"
+              },
+              "privacyPolicy": {
+                "type": "boolean"
+              },
+              "under18": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

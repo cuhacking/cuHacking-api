@@ -9,9 +9,6 @@ const MailListController = require('../controllers/mailListController');
  * Users Routes
  */
 
- // TODO: Find a better place for this
-router.options('*', MailListController.preflight); 
-
 router.get('/', Authentication.authenticate("admin"), UsersController.get);
 
 router.post('/register', UsersController.create);
@@ -19,6 +16,10 @@ router.post('/signin', UsersController.signin);
 router.post('/signout', UsersController.signout);
 router.post('/resetPassword', UsersController.resetPassword);
 router.get('/profile', UsersController.getProfile);
+
+router.get('/application', UsersController.getApplication);
+router.post('/application/save', UsersController.saveApplication);
+router.post('/application/submit', UsersController.submitApplication);
 
 router.get('/:uid', Authentication.authenticate("user"), UsersController.getByEmail);
 router.patch('/:uid', Authentication.authenticate("user"), UsersController.update);
