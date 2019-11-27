@@ -907,6 +907,9 @@
               },
               "privacyPolicy": {
                 "type": "boolean"
+              },
+              "under18": {
+                "type": "boolean"
               }
             }
           }

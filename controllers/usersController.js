@@ -55,7 +55,8 @@ const USER_SCHEMA = {
         },
         terms: {
             codeOfConduct: false,
-            privacyPolicy: false
+            privacyPolicy: false,
+            under18: false
         }
     }
 };
@@ -400,7 +401,7 @@ UsersController.submitApplication = function(req, res){
     editApplication(req.get("authorization"), req.body).then(function(result){
         return Database.get(COLLECTION_NAME, result.uid);
     }).then(function(dbRes){
-        return Mail.addTag(MAILING_LIST, dbRes.email, "applied");
+        return Mail.addTag(MAILING_LIST, dbRes.email, "applied-1");
     }).then(function(){
         res.sendStatus(200);
     }).catch(function(err){
@@ -440,7 +441,7 @@ UsersController.getApplication = function(req, res){
         res.status(404).send({
             operation: 'get',
             status: 'failure',
-            message: 'Token was invalid; Message: ' + err
+            message: 'Token was invalid'
         });
     });
 
