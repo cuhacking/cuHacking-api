@@ -1,5 +1,6 @@
 const express = require('express');
 const passport = require('passport');
+const cors = require('cors');
 const Authentication = require('./model/authentication');
 const Database = require('./model/database');
 const Account = require('./model/account');
@@ -16,7 +17,7 @@ const swaggerDocument = require('./swagger.json');
 
 const admin = require('firebase-admin');
 const firebase = require('firebase/app');
-const config = require('./config.json');  
+const config = require('./config.json');
 
 const env = process.env.NODE_ENV || "development";
 const PORT = config[env].port || 8080;
@@ -38,6 +39,7 @@ firebase.initializeApp(config[env].firebase_account_config);
 // Middleware for handling JSON bodies
 app.use(express.json())
 app.use(passport.initialize());
+app.use(cors())
 
 // Log each request the server receives
 app.use('*', (req, res, next) => {
