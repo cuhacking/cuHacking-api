@@ -20,6 +20,7 @@ const firebase = require('firebase/app');
 const config = require('./config.json');
 
 const env = process.env.NODE_ENV || "development";
+const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:3000';
 const PORT = config[env].port || 8080;
 const API_ROOT = config[env].api_root;
 
@@ -39,7 +40,6 @@ firebase.initializeApp(config[env].firebase_account_config);
 // Middleware for handling JSON bodies
 app.use(express.json())
 app.use(passport.initialize());
-app.use(cors())
 
 // Log each request the server receives
 app.use('*', (req, res, next) => {
@@ -60,8 +60,6 @@ Database.init(admin);
 Account.init(firebase, admin);
 
 // Handle API endpoints
-app.options('*', mailing_list); 
-
 app.use(API_ROOT, routes);
 app.use(API_ROOT + '/mailinglist/', mailing_list);
 app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
@@ -71,7 +69,7 @@ app.use(API_ROOT + '/users/', users);
 
 // Start the server
 app.listen(PORT, function(){
-    console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTP on " + API_ROOT);
+    console.log('Application server listening on port ' + PORT + " in " + env + " mode using HTTP on " + API_ROOT);
 });
 
 

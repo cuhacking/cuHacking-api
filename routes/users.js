@@ -1,9 +1,21 @@
 const express   = require('express');
 const router    = express.Router();
+const cors = require('cors')
+
+const config = require('../config.json');
+const env = process.env.NODE_ENV || 'development';
+const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:3000';
 
 const UsersController = require('../controllers/usersController');
 const Authentication = require('../model/authentication');
 const MailListController = require('../controllers/mailListController');
+
+// Enable CORS
+const corsOptions = {
+  origin: ALLOWED_ORIGIN
+};
+router.options('*', cors(corsOptions))
+router.use(cors(corsOptions))
 
 /**
  * Users Routes
