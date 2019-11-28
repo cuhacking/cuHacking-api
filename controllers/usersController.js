@@ -1,7 +1,10 @@
 const Database  = require('../model/database');
 const Account   = require('../model/account');
 const Mail      = require('../model/mail');
+const formidable = require('formidable');
+const fs        = require('fs');
 
+const UPLOAD_DIR = __dirname + "/resumes"
 
 const APPLICATION_STATUS = {
     UNSUBMITTED: "unsubmitted",
@@ -402,17 +405,35 @@ UsersController.saveApplication = function(req, res){
  * e.g. sending a confirmation
  */
 UsersController.submitApplication = function(req, res){
+    if(req.is('multipart/form-data')){
+        new formidable.IncomingForm({uploadDir: UPLOAD_DIR, keepExtensions: true}).parse(req, function(err, fields, files){
+            if (err) {
+                console.error('Error reading file: ' + err);
+            }
+            
+            let reqBody = JSON.parse(fields.body);
 
-    editApplication(req.get("authorization"), req.body).then(function(result){
-        return Database.get(COLLECTION_NAME, result.uid);
-    }).then(function(dbRes){
-        return Mail.addTag(MAILING_LIST, dbRes.email, ["applied-1", "2020"]);
-    }).then(function(){
-        res.sendStatus(200);
-    }).catch(function(err){
-        let errCode = err.code || 500; // Use response code if it's passed down from editApplication, otherwise return a generic 500
-        res.status(errCode).send(err);
-    });
+            editApplication(req.get("authorization"), reqBody).then(function(result){
+                // Result contains the uid of the user 
+                return Database.get(COLLECTION_NAME, result.uid);
+            }).then(function(dbRes){
+                let path = UPLOAD_DIR + '/' + dbRes.email + '.' +files.file.path.split(".").pop();
+                fs.rename(files.file.path, path, function(err){
+                    if(err){
+                        console.log("Error renaming file: " + err);
+                    }
+                });
+                // This returns the user's profile - we use it to get the email
+                return Mail.addTag(MAILING_LIST, dbRes.email, ["applied-1", "2020"]);
+            }).then(function(){
+                res.sendStatus(200);
+            }).catch(function(err){
+                console.log(err)
+                let errCode = err.code || 500; // Use response code if it's passed down from editApplication, otherwise return a generic 500
+                res.status(errCode).send(err);
+            });
+        });
+    }
 
 }
 
