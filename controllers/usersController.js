@@ -116,6 +116,11 @@ UsersController.create = function(req, res){
                 message: err
             })
         });
+    }).catch(function(err){
+        console.log("Error creating account")
+        res.status(500).send({
+            message: err
+        })
     });
 
 }
