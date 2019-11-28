@@ -401,7 +401,7 @@ UsersController.submitApplication = function(req, res){
     editApplication(req.get("authorization"), req.body).then(function(result){
         return Database.get(COLLECTION_NAME, result.uid);
     }).then(function(dbRes){
-        return Mail.addTag(MAILING_LIST, dbRes.email, "applied-1");
+        return Mail.addTag(MAILING_LIST, dbRes.email, ["applied-1", "2020"]);
     }).then(function(){
         res.sendStatus(200);
     }).catch(function(err){

@@ -250,18 +250,21 @@ Mail.unsubscribe = function(list, email){
 /**
  * Add a tag to a user in Mailchimp
  * Subscribes them to the mailing list if they are not already subscribed
+ * 
+ * Tags should be an _array_ of tags
  */
-Mail.addTag = function(list, email, tag){
+Mail.addTag = function(list, email, tags){
 
     let promise = new Promise(function(resolve, reject){
 
         Mail.getList(list).then(function(resList){
+            let tagsToAdd = []
+            for(let tag of tags){
+                tagsToAdd.push({"name": tag, "status": "active"});
+            }
 
             return mailchimp.post('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex') + '/tags', {
-                "tags": [{
-                    "name": tag,
-                    "status": "active"
-                }]
+                "tags": tagsToAdd
             });
 
         }).then(function(res){
@@ -273,15 +276,18 @@ Mail.addTag = function(list, email, tag){
                 Mail.subscribe(list, email).then(function(){
                     return Mail.getList(list);
                 }).then(function(resList){
+                    let tagsToAdd = []
+                    for(let tag of tags){
+                        tagsToAdd.push({"name": tag, "status": "active"});
+                    }
+
                     return mailchimp.post('/lists/' + resList.id + '/members/' + crypto.createHash('md5').update(email).digest('hex') + '/tags', {
-                        "tags": [{
-                            "name": tag,
-                            "status": "active"
-                        }]
+                        "tags": tagsToAdd
                     });
                 }).then(function(res){
                     resolve(res);
                 }).catch(function(subscribeErr){
+                    console.log(subscribeErr)
                     reject(subscribeErr);
                 });
             } else {
