@@ -1,4 +1,5 @@
 node_modules/
+resumes/
 *-firebase-adminsdk-*.json
 config.json
 *.log

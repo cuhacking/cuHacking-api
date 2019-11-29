@@ -2,15 +2,15 @@
   "swagger": "2.0",
   "info": {
     "description": "This is the API for cuHacking 2020.",
-    "version": "1.0.2",
+    "version": "1.2",
     "title": "Magneton (cuHacking 2020 API)",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   },
-  "host": "api.cuhacking.com",
-  "basePath": "/api",
+  "host": "cuhacking.com",
+  "basePath": "/api-dev",
   "tags": [
     {
       "name": "Mailing List",
@@ -19,6 +19,18 @@
     {
       "name": "Users",
       "description": "Handles users and their accounts"
+    },
+    {
+      "name": "Schedule",
+      "description": "The event schedule"
+    },
+    {
+      "name": "Updates",
+      "description": "The event's announcements"
+    },
+    {
+      "name": "Applications",
+      "description": "Applications for the event"
     }
   ],
   "schemes": [
@@ -71,161 +83,7 @@
         }
       }
     },
-    "/mailinglist/db": {
-      "get": {
-        "tags": [
-          "Mailing List"
-        ],
-        "summary": "Get all emails in the database",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "Emails successfully retrieved",
-            "schema": {
-              "type": "object",
-              "required": [
-                "email"
-              ],
-              "properties": {
-                "operation": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "items": {
-                  "type": "integer"
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error retrieving from Firestore"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      }
-    },
-    "/mailinglist/db/{email}": {
-      "get": {
-        "tags": [
-          "Mailing List"
-        ],
-        "summary": "Get a single email from the database",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "Email to get",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Email successfully retrieved",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "operation": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "items": {
-                  "type": "integer"
-                },
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error retrieving from Firestore"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      },
-      "delete": {
-        "tags": [
-          "Mailing List"
-        ],
-        "summary": "Delete an email from the database",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "path",
-            "name": "email",
-            "description": "Email to delete",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Email successfully deleted",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "type": "string"
-                },
-                "operation": {
-                  "type": "string"
-                },
-                "status": {
-                  "type": "string"
-                },
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Email was not found in the database"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      }
-    },
-    "/mailinglist/mailchimp/{email}": {
+    "/mailinglist/{email}": {
       "get": {
         "tags": [
           "Mailing List"
@@ -281,56 +139,35 @@
             ]
           }
         ]
-      }
-    },
-    "/users": {
-      "post": {
+      },
+      "delete": {
         "tags": [
-          "Users"
+          "Mailing List"
         ],
-        "summary": "Create a new user",
+        "summary": "Delete an email from Mailchimp",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "in": "body",
-            "name": "body",
-            "description": "User data",
+            "in": "path",
+            "name": "email",
+            "description": "Email to delete",
             "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "username",
-                "token"
-              ],
-              "properties": {
-                "username": {
-                  "type": "string"
-                },
-                "token": {
-                  "type": "string"
-                }
-              }
-            }
+            "type": "string"
           }
         ],
         "responses": {
-          "201": {
-            "description": "User successfully created"
+          "204": {
+            "description": "Email successfully deleted"
           },
-          "500": {
-            "description": "Failure in parsing the token or creating the user in Firestore"
+          "404": {
+            "description": "Email was not found"
           }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      },
+        }
+      }
+    },
+    "/users": {
       "get": {
         "tags": [
           "Users"
@@ -373,6 +210,55 @@
           },
           "500": {
             "description": "Error retrieving from Firestore"
+          }
+        },
+        "security": [
+          {
+            "magneton_auth": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User successfully created"
+          },
+          "500": {
+            "description": "Failure in parsing the token or creating the user in Firestore"
           }
         },
         "security": [
@@ -530,12 +416,383 @@
           }
         }
       }
+    },
+    "/users/signin": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Signs in a user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully signed in"
+          },
+          "403": {
+            "description": "Authentication failure"
+          }
+        }
+      }
+    },
+    "/users/signout": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Signs out a user and revokes their session",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully signed out"
+          },
+          "500": {
+            "description": "Error signing out"
+          }
+        }
+      }
+    },
+    "/users/passwordReset": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Sends a password reset email",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Password reset email successfully sent"
+          },
+          "500": {
+            "description": "Error sending password reset email"
+          }
+        }
+      }
+    },
+    "/users/profile": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Gets the profile of the currently logged in user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "operation": {
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "username": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string"
+                    },
+                    "uid": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Retrieve the event schedule",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                },
+                "events": {
+                  "type": "object",
+                  "properties": {
+                    "id141": {
+                      "type": "object",
+                      "properties": {
+                        "locationName": {
+                          "type": "string"
+                        },
+                        "locationId": {
+                          "type": "string"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "startTime": {
+                          "type": "integer"
+                        },
+                        "endTime": {
+                          "type": "number"
+                        },
+                        "type": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schedule/{id}": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Get a single event",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "The UID assigned by firebase which represents the user."
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Event successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "locationName": {
+                  "type": "string"
+                },
+                "locationId": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "startTime": {
+                  "type": "string"
+                },
+                "endTime": {
+                  "type": "number"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Event was not found"
+          }
+        }
+      }
+    },
+    "/updates": {
+      "get": {
+        "tags": [
+          "Updates"
+        ],
+        "summary": "Retrieve the announcement feed. Comes with a version number that indicates how new the information is. The larger the number, the newer it is.",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The annoucments have been retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                },
+                "updates": {
+                  "type": "object",
+                  "properties": {
+                    "id123": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "description": {
+                          "type": "string"
+                        },
+                        "locationId": {
+                          "type": "string"
+                        },
+                        "deliveryTime": {
+                          "type": "number"
+                        },
+                        "eventId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/application": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Gets the application for the current user",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's application was successfully retrieved",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          },
+          "404": {
+            "description": "The user could not be found"
+          }
+        }
+      }
+    },
+    "/users/application/save": {
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Saves the users's application",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Can be a partial version of this schema  (e.g. you can submit just the basicInfo, or just the status, etc.)",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's application was successfully saved"
+          },
+          "400": {
+            "description": "User's token or input data waS invalid"
+          },
+          "404": {
+            "description": "User could not be found"
+          },
+          "500": {
+            "description": "Error saving the application"
+          }
+        }
+      }
+    },
+    "/users/application/submit": {
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Submits the users's application",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Can be a partial version of this schema  (e.g. you can submit just the basicInfo, or just the status, etc.) Make sure that the status is \"submitted\"",
+            "schema": {
+              "$ref": "#/definitions/Application"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The user's application was successfully submitted"
+          },
+          "400": {
+            "description": "User's token or input data waS invalid"
+          },
+          "404": {
+            "description": "User could not be found"
+          },
+          "500": {
+            "description": "Error saving the application"
+          }
+        }
+      }
     }
   },
   "securityDefinitions": {
     "magneton_auth": {
       "type": "oauth2",
-      "authorizationUrl": "http://petstore.swagger.io/oauth/dialog",
+      "authorizationUrl": "http://cuhacking.com/users/signin",
       "flow": "implicit",
       "scopes": {
         "user": "Access own data",
@@ -546,5 +803,118 @@
   "externalDocs": {
     "description": "Find out more about Swagger",
     "url": "http://swagger.io"
+  },
+  "definitions": {
+    "Application": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "basicInfo": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "gender": {
+              "type": "string"
+            },
+            "race": {
+              "type": "string"
+            },
+            "emergencyPhone": {
+              "type": "string"
+            }
+          }
+        },
+        "personalInfo": {
+          "type": "object",
+          "properties": {
+            "school": {
+              "type": "string"
+            },
+            "major": {
+              "type": "string"
+            },
+            "minor": {
+              "type": "string"
+            },
+            "degree": {
+              "type": "string"
+            },
+            "expectedGraduation": {
+              "type": "number"
+            },
+            "cityOfOrigin": {
+              "type": "string"
+            },
+            "tShirtSize": {
+              "type": "string"
+            },
+            "dietaryRestrictions": {
+              "type": "string"
+            },
+            "wantsShuttle": {
+              "type": "boolean"
+            }
+          }
+        },
+        "skills": {
+          "type": "object",
+          "properties": {
+            "numHackathons": {
+              "type": "number"
+            },
+            "selfTitle": {
+              "type": "string"
+            },
+            "accomplishmentStatement": {
+              "type": "string"
+            },
+            "challengeStatement": {
+              "type": "string"
+            }
+          }
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "gitHub": {
+              "type": "string"
+            },
+            "linkedin": {
+              "type": "string"
+            },
+            "website": {
+              "type": "string"
+            },
+            "soughtPosition": {
+              "type": "string"
+            },
+            "resume": {
+              "type": "string"
+            }
+          }
+        },
+        "terms": {
+          "type": "object",
+          "properties": {
+            "codeOfConduct": {
+              "type": "boolean"
+            },
+            "privacyPolicy": {
+              "type": "boolean"
+            },
+            "under18": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    }
   }
 }

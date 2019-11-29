@@ -20,12 +20,26 @@ Before you get started, you'll have to create a file called `config.json` in you
     "production": {
         "firebase_url": "THE URL TO YOUR PROD FIREBASE DATABASE",
         "firebase_key_file": "THE PATH TO YOUR FIREBASE AUTHENTICATION JSON FILE, RELATIVE TO THE ROOT",
-        "mailchimp_api_key": "YOUR MAILCHIMP API KEY"
+        "mailchimp_api_key": "YOUR MAILCHIMP API KEY",
+        "credentials": {
+            "username": "USERNAME TO DOCS",
+            "password": "PASSWORD TO DOCS"
+        },
+        "allowed_origin": "ALLOWED ORIGINS (IF CORS IS AN ISSUE)",
+        "api_root": "ROOT OF YOUR API'S DOMAIN (e.g. /api for blah.com/api)",
+        "port": 1234
     },
     "development": {
         "firebase_url": "THE URL TO YOUR TEST FIREBASE DATABASE",
         "firebase_key_file": "THE PATH TO YOUR FIREBASE AUTHENTICATION JSON FILE, RELATIVE TO THE ROOT",
-        "mailchimp_api_key": "YOUR MAILCHIMP API KEY"
+        "mailchimp_api_key": "YOUR MAILCHIMP API KEY",
+                "credentials": {
+            "username": "USERNAME TO DOCS",
+            "password": "PASSWORD TO DOCS"
+        },
+        "allowed_origin": "ALLOWED ORIGINS (IF CORS IS AN ISSUE)",
+        "api_root": "ROOT OF YOUR API'S DOMAIN (e.g. /api for blah.com/api)",
+        "port": 1234
     }
 }
 ```

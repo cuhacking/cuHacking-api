@@ -1,10 +1,8 @@
-const Database  = require('../model/database');
 const Mail = require('../model/mail');
 const config   = require('../config.json');  
 const MailListController = module.exports;
 
-const COLLECTION_NAME = 'mailing_list';
-const MAILING_LIST = 'MailingList';
+const MAILING_LIST = 'cuhacking';
 
 const env = process.env.NODE_ENV || "development";
 const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:8080'; 
@@ -18,48 +16,6 @@ MailListController.preflight = function(req, res) {
 
 }
 
-MailListController.get = function(req, res){
-    
-    let limit = req.query.limit || 0; // If the limit query is set, use that, otherwise use 0
-    Database.getAll(COLLECTION_NAME, limit).then(function(databaseResult){
-        let data = {
-            operation: 'get',
-            status: 'success',
-            items: databaseResult.length,
-            data: databaseResult
-        };
-    
-        res.status(200).send(data);
-    }).catch(function(err){
-        res.status(500).send(err);
-    });
-
-}
-
-MailListController.getByEmail = function(req, res){
-    
-    let email = req.params.email;
-    Database.get(COLLECTION_NAME, email).then(function(databaseResult){
-        if(databaseResult){
-            res.status(200).send({
-                email: email,
-                operation: 'get',
-                status: 'success',
-                data: databaseResult
-            });
-        } else {
-            res.status(404).send({
-                email: email,
-                operation: 'get',
-                status: 'failed',
-                message: 'Email not found'
-            });
-        }
-    }).catch(function(err){
-        res.status(500).send(err);
-    });
-
-}
 
 MailListController.add = function(req, res){
 
@@ -97,32 +53,6 @@ MailListController.add = function(req, res){
             message: 'Invalid email provided'
         });
     }
-}
-
-
-MailListController.delete = function(req, res){
-
-    let email = req.params.email;
-    let doc = Database.get(COLLECTION_NAME, email);
-
-    if(!doc){
-        res.status(404).send({
-            email: email,
-            operation: 'delete',
-            status: 'failed',
-            message: 'Email not found'
-        });
-    } else {
-        Database.remove(COLLECTION_NAME, email).then(function(){
-            res.status(204).send({
-                email: email,
-                operation: 'delete',
-                status: 'success',
-                message: 'Email successfully deleted' 
-            });
-        });
-    }
-
 }
 
 

@@ -1,50 +1,75 @@
 const express = require('express');
 const passport = require('passport');
+const cors = require('cors');
 const Authentication = require('./model/authentication');
 const Database = require('./model/database');
-const http = require('http');
-const https = require('https');
+const Account = require('./model/account');
 
 const app = express();
 const routes = require('./routes/routes');
 const mailing_list = require('./routes/mailinglist');
+const schedule = require('./routes/schedule');
+const updates = require('./routes/updates');
 const users = require('./routes/users');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
 
-const admin    = require('firebase-admin');
-const config   = require('./config.json');  
+const admin = require('firebase-admin');
+const firebase = require('firebase/app');
+const config = require('./config.json');
 
 const env = process.env.NODE_ENV || "development";
-const PORT = config[env].port;
+const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:3000';
+const PORT = config[env].port || 8080;
 const API_ROOT = config[env].api_root;
 
 const serviceAccount = require('./' + config[env].firebase_key_file);
 
+require('firebase/auth');
+
+// Initialize Firebase admin SDK
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: config[env].firebase_url
 });
 
+// Inititalize Firebase app SDK
+firebase.initializeApp(config[env].firebase_account_config);
+
 // Middleware for handling JSON bodies
 app.use(express.json())
 app.use(passport.initialize());
 
+// Log each request the server receives
+app.use('*', (req, res, next) => {
+    console.log(`HTTP request received: ${req.method} -> ${req.originalUrl}`)
+    console.debug('Request Body:', req.body)
+    next()
+})
+
+// Log all errors
+app.use((error, req, res, next) => {
+    console.error('Express error: ', error)
+    res.sendStatus(error.status || 500)
+})
+
+// Initialize Firebase instances
 Authentication.init(admin);
 Database.init(admin);
+Account.init(firebase, admin);
 
 // Handle API endpoints
-app.options('*', mailing_list); 
-
 app.use(API_ROOT, routes);
 app.use(API_ROOT + '/mailinglist/', mailing_list);
 app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
+app.use(API_ROOT + '/schedule/', schedule);
+app.use(API_ROOT + '/updates/', updates);
 app.use(API_ROOT + '/users/', users);
 
 // Start the server
 app.listen(PORT, function(){
-    console.log('Application server listening on port ' + PORT + " in " + process.env.NODE_ENV + " mode using HTTP on " + API_ROOT);
+    console.log('Application server listening on port ' + PORT + " in " + env + " mode using HTTP on " + API_ROOT);
 });
 
 
