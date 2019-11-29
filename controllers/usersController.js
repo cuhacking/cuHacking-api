@@ -73,7 +73,7 @@ const USER_SCHEMA = {
 };
 
 const COLLECTION_NAME = 'Users';
-const MAILING_LIST = 'MailingList';
+const MAILING_LIST = 'cuhacking';
 const UsersController = module.exports;
 
 function createUser(input){
