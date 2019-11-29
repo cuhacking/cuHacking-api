@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "This is the API for cuHacking 2020.",
-    "version": "1.2-dev",
+    "version": "1.2",
     "title": "Magneton (cuHacking 2020 API)",
     "license": {
       "name": "Apache 2.0",
