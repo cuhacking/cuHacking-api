@@ -247,6 +247,9 @@ UsersController.signin = function(req, res){
         res.status(200).send({
             token: token    
         });
+    }).catch(error => {
+        console.log('Sign in failed, error: ', error)
+        res.sendStatus(401)
     });
 
 }
