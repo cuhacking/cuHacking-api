@@ -2,7 +2,7 @@ const Mail = require('../model/mail');
 const config   = require('../config.json');  
 const MailListController = module.exports;
 
-const MAILING_LIST = 'MailingList';
+const MAILING_LIST = 'cuhacking';
 
 const env = process.env.NODE_ENV || "development";
 const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:8080'; 

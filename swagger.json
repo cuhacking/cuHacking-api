@@ -168,53 +168,6 @@
       }
     },
     "/users": {
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Create a new user",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "body",
-            "description": "User data",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "required": [
-                "username",
-                "password"
-              ],
-              "properties": {
-                "username": {
-                  "type": "string"
-                },
-                "token": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "User successfully created"
-          },
-          "500": {
-            "description": "Failure in parsing the token or creating the user in Firestore"
-          }
-        },
-        "security": [
-          {
-            "magneton_auth": [
-              "admin"
-            ]
-          }
-        ]
-      },
       "get": {
         "tags": [
           "Users"
@@ -257,6 +210,55 @@
           },
           "500": {
             "description": "Error retrieving from Firestore"
+          }
+        },
+        "security": [
+          {
+            "magneton_auth": [
+              "admin"
+            ]
+          }
+        ]
+      }
+    },
+    "/users/register": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Create a new user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "User data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": [
+                "username",
+                "password"
+              ],
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User successfully created"
+          },
+          "500": {
+            "description": "Failure in parsing the token or creating the user in Firestore"
           }
         },
         "security": [
@@ -707,7 +709,7 @@
           "200": {
             "description": "The user's application was successfully retrieved",
             "schema": {
-              "$ref": "#/components/schemas/Application"
+              "$ref": "#/definitions/Application"
             }
           },
           "404": {
@@ -728,7 +730,7 @@
             "name": "body",
             "description": "Can be a partial version of this schema  (e.g. you can submit just the basicInfo, or just the status, etc.)",
             "schema": {
-              "$ref": "#/components/schemas/Application"
+              "$ref": "#/definitions/Application"
             }
           }
         ],
@@ -763,7 +765,7 @@
             "name": "body",
             "description": "Can be a partial version of this schema  (e.g. you can submit just the basicInfo, or just the status, etc.) Make sure that the status is \"submitted\"",
             "schema": {
-              "$ref": "#/components/schemas/Application"
+              "$ref": "#/definitions/Application"
             }
           }
         ],
@@ -802,115 +804,113 @@
     "description": "Find out more about Swagger",
     "url": "http://swagger.io"
   },
-  "components": {
-    "schemas": {
-      "Application": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string"
-          },
-          "basicInfo": {
-            "type": "object",
-            "properties": {
-              "firstName": {
-                "type": "string"
-              },
-              "lastName": {
-                "type": "string"
-              },
-              "gender": {
-                "type": "string"
-              },
-              "race": {
-                "type": "string"
-              },
-              "emergencyPhone": {
-                "type": "string"
-              }
+  "definitions": {
+    "Application": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string"
+        },
+        "basicInfo": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "gender": {
+              "type": "string"
+            },
+            "race": {
+              "type": "string"
+            },
+            "emergencyPhone": {
+              "type": "string"
             }
-          },
-          "personalInfo": {
-            "type": "object",
-            "properties": {
-              "school": {
-                "type": "string"
-              },
-              "major": {
-                "type": "string"
-              },
-              "minor": {
-                "type": "string"
-              },
-              "degree": {
-                "type": "string"
-              },
-              "expectedGraduation": {
-                "type": "number"
-              },
-              "cityOfOrigin": {
-                "type": "string"
-              },
-              "tShirtSize": {
-                "type": "string"
-              },
-              "dietaryRestrictions": {
-                "type": "string"
-              },
-              "wantsShuttle": {
-                "type": "boolean"
-              }
+          }
+        },
+        "personalInfo": {
+          "type": "object",
+          "properties": {
+            "school": {
+              "type": "string"
+            },
+            "major": {
+              "type": "string"
+            },
+            "minor": {
+              "type": "string"
+            },
+            "degree": {
+              "type": "string"
+            },
+            "expectedGraduation": {
+              "type": "number"
+            },
+            "cityOfOrigin": {
+              "type": "string"
+            },
+            "tShirtSize": {
+              "type": "string"
+            },
+            "dietaryRestrictions": {
+              "type": "string"
+            },
+            "wantsShuttle": {
+              "type": "boolean"
             }
-          },
-          "skills": {
-            "type": "object",
-            "properties": {
-              "numHackathons": {
-                "type": "number"
-              },
-              "selfTitle": {
-                "type": "string"
-              },
-              "accomplishmentStatement": {
-                "type": "string"
-              },
-              "challengeStatement": {
-                "type": "string"
-              }
+          }
+        },
+        "skills": {
+          "type": "object",
+          "properties": {
+            "numHackathons": {
+              "type": "number"
+            },
+            "selfTitle": {
+              "type": "string"
+            },
+            "accomplishmentStatement": {
+              "type": "string"
+            },
+            "challengeStatement": {
+              "type": "string"
             }
-          },
-          "profile": {
-            "type": "object",
-            "properties": {
-              "gitHub": {
-                "type": "string"
-              },
-              "linkedin": {
-                "type": "string"
-              },
-              "website": {
-                "type": "string"
-              },
-              "soughtPosition": {
-                "type": "string"
-              },
-              "resume": {
-                "type": "string"
-              }
+          }
+        },
+        "profile": {
+          "type": "object",
+          "properties": {
+            "gitHub": {
+              "type": "string"
+            },
+            "linkedin": {
+              "type": "string"
+            },
+            "website": {
+              "type": "string"
+            },
+            "soughtPosition": {
+              "type": "string"
+            },
+            "resume": {
+              "type": "string"
             }
-          },
-          "terms": {
-            "type": "object",
-            "properties": {
-              "codeOfConduct": {
-                "type": "boolean"
-              },
-              "privacyPolicy": {
-                "type": "boolean"
-              },
-              "under18": {
-                "type": "boolean"
-              }
+          }
+        },
+        "terms": {
+          "type": "object",
+          "properties": {
+            "codeOfConduct": {
+              "type": "boolean"
+            },
+            "privacyPolicy": {
+              "type": "boolean"
+            },
+            "under18": {
+              "type": "boolean"
             }
           }
         }

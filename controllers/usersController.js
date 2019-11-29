@@ -1,9 +1,13 @@
 const Database  = require('../model/database');
 const Account   = require('../model/account');
 const Mail      = require('../model/mail');
+const formidable = require('formidable');
+const fs        = require('fs');
 
+const UPLOAD_DIR = __dirname + "/resumes"
 
 const APPLICATION_STATUS = {
+    UNSTARTED: 'unstarted',
     UNSUBMITTED: "unsubmitted",
     SUBMITTED: "submitted",
     ACCEPTED1: "accepted-1",
@@ -18,10 +22,10 @@ const USER_SCHEMA = {
     email: null,
     role: "user",
     uid: null,
-    rsvp: {
-    },
+    rsvp: {},
     application: {
-        status: APPLICATION_STATUS.UNSUBMITTED,
+        status: APPLICATION_STATUS.UNSTARTED,
+        stage: 1,
         basicInfo: {
             firstName: null, 
             lastName: null,
@@ -37,7 +41,14 @@ const USER_SCHEMA = {
             expectedGraduation: null,
             cityOfOrigin: null,
             tShirtSize: null,
-            dietaryRestrictions: null,
+            dietaryRestrictions: {
+                halal: false,
+                vegetarian: false, 
+                lactoseFree: false,
+                treeNutFree: false,
+                glutenFree: false, 
+                other: null 
+            },
             wantsShuttle: null
         },
         skills: {
@@ -62,7 +73,7 @@ const USER_SCHEMA = {
 };
 
 const COLLECTION_NAME = 'Users';
-const MAILING_LIST = 'MailingList';
+const MAILING_LIST = 'cuhacking';
 const UsersController = module.exports;
 
 function createUser(input){
@@ -101,12 +112,17 @@ UsersController.create = function(req, res){
         
         console.log("Account created with email: " + userData.email);
         Database.add(COLLECTION_NAME, 'uid', user).then(function(){
-            res.status(201).send({
-                user: userData.email,
-                operation: 'create',
-                status: 'success',
-                message: 'User successfully created'
-            });
+            Account.signin(req.body.email, req.body.password).then(function(token){
+                res.status(201).send({
+                    user: {
+                        email: userData.email,
+                        token
+                    },
+                    operation: 'create',
+                    status: 'success',
+                    message: 'User successfully created'
+                });
+            })
         }).catch(function(err){
             console.log("Error with adding to db")
             res.status(500).send({
@@ -116,6 +132,18 @@ UsersController.create = function(req, res){
                 message: err
             })
         });
+    }).catch(function(err){
+        console.log("Error creating account")
+        if (err[0] === 'auth/email-already-in-use') {
+            console.log('Email in use')
+            res.status(409).send({
+                message: err[1]
+            })
+        } else {
+            res.status(500).send({
+                message: err
+            })
+        }
     });
 
 }
@@ -239,6 +267,9 @@ UsersController.signin = function(req, res){
         res.status(200).send({
             token: token    
         });
+    }).catch(error => {
+        console.log('Sign in failed, error: ', error)
+        res.sendStatus(401)
     });
 
 }
@@ -247,6 +278,7 @@ UsersController.signin = function(req, res){
 UsersController.signout = function(req, res){
 
     let auth_header = req.get("authorization"); 
+    console.log('signing out: ', auth_header)
 
     if(auth_header){
         let token = auth_header.split(" ")[1]; // Remove the Bearer
@@ -398,17 +430,19 @@ UsersController.saveApplication = function(req, res){
  */
 UsersController.submitApplication = function(req, res){
 
-    editApplication(req.get("authorization"), req.body).then(function(result){
+    editApplication(req.get("authorization"), JSON.parse(req.body.form)).then(function(result){
+        // Result contains the uid of the user 
         return Database.get(COLLECTION_NAME, result.uid);
     }).then(function(dbRes){
-        return Mail.addTag(MAILING_LIST, dbRes.email, "applied-1");
+        // This returns the user's profile - we use it to get the email
+        return Mail.addTag(MAILING_LIST, dbRes.email, ["applied-1", "2020"]);
     }).then(function(){
         res.sendStatus(200);
     }).catch(function(err){
+        console.log('Submit error:', err)
         let errCode = err.code || 500; // Use response code if it's passed down from editApplication, otherwise return a generic 500
         res.status(errCode).send(err);
     });
-
 }
 
 
