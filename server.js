@@ -50,7 +50,7 @@ app.use('*', (req, res, next) => {
 
 // Log all errors
 app.use((error, req, res, next) => {
-    console.error(error)
+    console.error('Express error: ', error)
     res.sendStatus(error.status || 500)
 })
 

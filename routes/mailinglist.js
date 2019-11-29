@@ -13,8 +13,8 @@ const Authentication = require('../model/authentication');
 const corsOptions = {
   origin: ALLOWED_ORIGIN
 };
-router.options('*', cors(corsOptions))
-router.use(cors(corsOptions))
+router.options('*', cors())
+router.use(cors())
 
 /**
  * Mailing List Routes
