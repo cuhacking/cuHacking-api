@@ -1,0 +1,23 @@
+jobs:
+  build:
+    docker: 
+      - image: circleci/node:10.17
+
+    branches:
+      only:
+        - master
+        - develop
+
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "db:11:ad:b2:ad:8c:4a:e0:bd:32:f8:29:18:91:68:0a"
+      - run: |
+          if [ "$CIRCLE_BRANCH" = "master" ]; then
+            scp -oStrictHostKeyChecking=no -r $(pwd)/* $SERVER_USER@$SERVER_IP:~/cuhacking-api
+            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton'
+          elif [ "$CIRCLE_BRANCH" = "develop" ]; then
+            scp -oStrictHostKeyChecking=no -r $(pwd)/* $SERVER_USER@$SERVER_IP:~/api-dev
+            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton'
+          fi
