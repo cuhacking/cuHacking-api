@@ -19,5 +19,5 @@ jobs:
             ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton'
           elif [ "$CIRCLE_BRANCH" = "develop" ]; then
             scp -oStrictHostKeyChecking=no -r $(pwd)/* $SERVER_USER@$SERVER_IP:~/api-dev
-            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton'
+            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton-dev'
           fi
