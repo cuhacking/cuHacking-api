@@ -15,9 +15,11 @@ jobs:
             - "db:11:ad:b2:ad:8c:4a:e0:bd:32:f8:29:18:91:68:0a"
       - run: |
           if [ "$CIRCLE_BRANCH" = "master" ]; then
-            scp -oStrictHostKeyChecking=no -r $(pwd)/* $SERVER_USER@$SERVER_IP:~/cuhacking-api
-            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton'
+            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'cd ~/cuhacking-api; rm -r controllers model routes swagger.json server.js package.json'
+            scp -oStrictHostKeyChecking=no -r controllers model routes swagger.json server.js package.json $SERVER_USER@$SERVER_IP:~/cuhacking-api
+            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'cd ~/cuhacking-api; yarn && pm2 restart Magneton'
           elif [ "$CIRCLE_BRANCH" = "develop" ]; then
+          ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'cd ~/api-dev; rm -r controllers model routes swagger.json server.js package.json'
             scp -oStrictHostKeyChecking=no -r $(pwd)/* $SERVER_USER@$SERVER_IP:~/api-dev
-            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'yarn && pm2 restart Magneton-dev'
+            ssh -oStrictHostKeyChecking=no $SERVER_USER@$SERVER_IP 'cd ~/api-dev; yarn && pm2 restart Magneton-dev'
           fi
