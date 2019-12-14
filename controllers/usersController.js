@@ -23,6 +23,7 @@ const USER_SCHEMA = {
     role: "user",
     uid: null,
     rsvp: {},
+    scanned: [],
     application: {
         status: APPLICATION_STATUS.UNSTARTED,
         stage: 1,
@@ -478,5 +479,33 @@ UsersController.getApplication = function(req, res){
             message: 'Token was invalid'
         });
     });
+
+}
+
+
+UsersController.scan = function(req, res){
+
+    let uid = req.body.uid;
+    let eventId = req.body.eventId;
+
+    Database.get(COLLECTION_NAME, uid).then(function(user){
+
+        let scanned = [];
+        if(user.scanned){
+            scanned = user.scanned;
+            if(scanned.contains(eventId)){
+                return res.status(400).send("User has already been scanned for this event")
+            }
+        }
+
+        Database.update(COLLECTION_NAME, uid, {"scanned": scanned}).then(function(){
+            res.sendStatus(200);
+        }).catch(function(err){
+            console.log("Scanning failed with error: " + err);
+            res.sendStatus(500);
+        });
+        
+    })
+
 
 }
