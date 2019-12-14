@@ -1,5 +1,6 @@
 const generateId = require('shortid') // We're going to need this for making announcements
 const Updates = require('../model/updates');
+const Database = require('../model/database');
 
 UpdatesController = module.exports;
 

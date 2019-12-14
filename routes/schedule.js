@@ -9,5 +9,9 @@ router.use(cors())
 
 router.get('/', ScheduleController.getSchedule);
 router.get('/:id', ScheduleController.getEvent);
+router.get('/version', ScheduleController.getVersion);
+
+router.post('/', ScheduleController.addEvent);
+router.patch('/:id', ScheduleController.editEvent);
 
 module.exports = router;
