@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f5ecb68a-2749-44d7-b6c5-ed19ddd83f27",
+		"_postman_id": "03e16929-458d-4c42-bf83-9978d335fc3a",
 		"name": "Magneton",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1242,6 +1242,609 @@
 								"api-dev",
 								"mailinglist",
 								"ryanlydev@gmail.com"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "7. Schedule, Updates, Map",
+			"item": [
+				{
+					"name": "Get Schedule Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "1ae9a99f-fb13-4ba5-8f60-7170b68600b3",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version is valid\", () => {",
+									"    pm.expect(jsonData.version).to.be.an('number');",
+									"});",
+									"",
+									"pm.environment.set(\"SCHEDULE_VERSION\", jsonData.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Schedule Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d4cc2a97-2c4e-4abb-9ee8-9d2b7c7432c4",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version was correctly updated\", () => {",
+									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"});",
+									"",
+									"pm.environment.set(\"SCHEDULE_VERSION\", jsonData.version);",
+									"pm.environment.set(\"SCHEDULE_EVENT\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"event99\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Schedule Events",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6e7d3b6d-ea3e-49df-8036-a8d25389ce56",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"New schedule event is present\", () => {",
+									"    let eventData = Object.values(jsonData);",
+									"    eventData = eventData.map(event => event.id);",
+									"    pm.expect(eventData).to.include(pm.environment.get(\"SCHEDULE_EVENT\"));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific Schedule Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f86fff49-9eb3-470c-9998-38d7f05a91eb",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/{{SCHEDULE_EVENT}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"{{SCHEDULE_EVENT}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify Schedule Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7b02524e-67af-4898-a724-2ddcb74105d8",
+								"exec": [
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"modifiedEvent3\",\n\t\"otherField\": \"otherValue\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/{{SCHEDULE_EVENT}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"{{SCHEDULE_EVENT}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Schedule Version Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5dfb64c9-8e3b-4d22-9065-1d3faf57ff29",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const prevVersion = parseInt(pm.environment.get(\"SCHEDULE_VERSION\"));",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version was correctly updated\", () => {",
+									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Updates Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "e7d0a884-4ead-4186-8cb9-5ca63e11c1ac",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version is valid\", () => {",
+									"    pm.expect(jsonData.version).to.be.an('number');",
+									"});",
+									"",
+									"pm.environment.set(\"UPDATE_VERSION\", jsonData.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/updates/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"updates",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ddaf6ec2-65c0-4a1c-9056-f2b3dc2baf6f",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const prevVersion = parseInt(pm.environment.get(\"UPDATE_VERSION\"));",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version was correctly updated\", () => {",
+									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"});",
+									"",
+									"pm.environment.set(\"UPDATE_VERSION\", jsonData.version);",
+									"pm.environment.set(\"UPDATE_ID\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"event3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/updates",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"updates"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Update Version Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "babd6787-4e35-4fb5-96a4-5a8ead1b1f20",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const prevVersion = parseInt(pm.environment.get(\"UPDATE_VERSION\"));",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version was correctly updated\", () => {",
+									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/updates/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"updates",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Added Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "5f947185-2f80-4ded-a439-7d8f2594b57a",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/updates/{{UPDATE_ID}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"updates",
+								"{{UPDATE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Map Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0ab1532d-79fc-4aab-91d7-03eb17d71dc9",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version is valid\", () => {",
+									"    pm.expect(jsonData.version).to.be.an('number');",
+									"});",
+									"",
+									"pm.environment.set(\"MAP_VERSION\", jsonData.version);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/map/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"map",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Map",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2fbe51da-73ec-4a20-8476-6072c0aa012d",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const prevVersion = parseInt(pm.environment.get(\"MAP_VERSION\"));",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version was correctly updated\", () => {",
+									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"});",
+									"",
+									"pm.environment.set(\"MAP_VERSION\", jsonData.version);",
+									"pm.environment.set(\"MAP_ID\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"event3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/map",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"map"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Check Map Version Updated",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d14834e4-9c1f-4860-8420-bb86cb776b82",
+								"exec": [
+									"const jsonData = pm.response.json();",
+									"const prevVersion = parseInt(pm.environment.get(\"MAP_VERSION\"));",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Version was correctly updated\", () => {",
+									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/map/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"map",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Map",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/map/{{MAP_ID}}",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"map",
+								"{{MAP_ID}}"
 							]
 						}
 					},
