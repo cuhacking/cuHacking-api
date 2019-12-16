@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "f5ecb68a-2749-44d7-b6c5-ed19ddd83f27",
+		"_postman_id": "19bdcd9e-d372-4cd0-a166-a564c53ef365",
 		"name": "Magneton",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1242,6 +1242,137 @@
 								"api-dev",
 								"mailinglist",
 								"ryanlydev@gmail.com"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "7. Schedule and Updates",
+			"item": [
+				{
+					"name": "Get Schedule Version",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/version",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"version"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Schedule Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Specific Schedule Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/id1",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"id1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Schedule Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"event3\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify Schedule Event",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"modifiedEvent3\",\n\t\"otherField\": \"otherValue\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/schedule/8081SqgK",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"schedule",
+								"8081SqgK"
 							]
 						}
 					},
