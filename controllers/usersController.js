@@ -3,6 +3,7 @@ const Account   = require('../model/account');
 const Mail      = require('../model/mail');
 const formidable = require('formidable');
 const fs        = require('fs');
+const Fuse      = requier('fuse.js');
 
 const UPLOAD_DIR = __dirname + "/resumes"
 
@@ -482,30 +483,39 @@ UsersController.getApplication = function(req, res){
 
 }
 
+UsersController.search = function(req, res) {
 
-UsersController.scan = function(req, res){
-
-    let uid = req.body.uid;
-    let eventId = req.body.eventId;
-
-    Database.get(COLLECTION_NAME, uid).then(function(user){
-
-        let scanned = [];
-        if(user.scanned){
-            scanned = user.scanned;
-            if(scanned.contains(eventId)){
-                return res.status(400).send("User has already been scanned for this event")
-            }
-        }
-
-        Database.update(COLLECTION_NAME, uid, {"scanned": scanned}).then(function(){
-            res.sendStatus(200);
-        }).catch(function(err){
-            console.log("Scanning failed with error: " + err);
-            res.sendStatus(500);
+    let name = req.body.name;
+    Database.getAll(COLLECTION_NAME).then(function(result){
+        let users = result.data.map(user => {
+            return {
+                name: `${user.application.basicInfo.firstName} ${user.application.basicInfo.lastName}`, 
+                email: user.email, 
+                uid: user.uid
+            };
         });
-        
-    })
 
+        const options = {
+            shouldSort: true,
+            threshold: 0.6,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+              "name"
+            ]
+          };
+        let fuse = new Fuse(users, options);
+        let matches = fuse.search(name);
+          
+        if(matches){
+            res.status(200).send(matches);
+        } else {
+            res.sendStatus(404);
+        }
+    }).catch(function(err){
+        res.sendStatus(500);
+    });
 
 }
