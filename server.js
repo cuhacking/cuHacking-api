@@ -11,6 +11,7 @@ const mailing_list = require('./routes/mailinglist');
 const schedule = require('./routes/schedule');
 const updates = require('./routes/updates');
 const users = require('./routes/users');
+const scan = require('./routes/scan');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -66,6 +67,7 @@ app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swagger
 app.use(API_ROOT + '/schedule/', schedule);
 app.use(API_ROOT + '/updates/', updates);
 app.use(API_ROOT + '/users/', users);
+app.use(API_ROOT + '/scan/', scan);
 
 // Start the server
 app.listen(PORT, function(){
