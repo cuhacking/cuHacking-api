@@ -23,6 +23,7 @@ const USER_SCHEMA = {
     role: "user",
     uid: null,
     rsvp: {},
+    scanned: [],
     application: {
         status: APPLICATION_STATUS.UNSTARTED,
         stage: 1,
