@@ -84,13 +84,13 @@ Database.getAll = function(collection, limit=0){
 
     let promise = new Promise(function(resolve, reject){
         let collectionRef = db.collection(collection);
-        let res = {};
+        let res = [];
         collectionRef.get().then(function(snapshot){
             let counter = 0;
             
             snapshot.forEach(function(doc){
                 if(limit !== 0 && counter > limit) return;
-                res[doc.id] = doc.data();
+                res.push(doc.data());
                 counter++;
             });
     
