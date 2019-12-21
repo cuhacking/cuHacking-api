@@ -495,6 +495,8 @@ UsersController.search = function(req, res) {
         // Filter out users that don't have an application
         let users = result.filter(user => user.application).map(user => {
             return {
+                firstName: user.application.basicInfo.firstName,
+                lastName: user.application.basicInfo.lastName,
                 name: `${user.application.basicInfo.firstName} ${user.application.basicInfo.lastName}`, 
                 email: user.email, 
                 uid: user.uid
@@ -511,7 +513,9 @@ UsersController.search = function(req, res) {
             minMatchCharLength: 1,
             keys: [
               "name",
-              "email"
+              "email",
+              "firstName",
+              "lastName"
             ]
           };
         let fuse = new Fuse(users, options);
