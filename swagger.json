@@ -792,6 +792,42 @@
         }
       }
     },
+    "/users/search": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Fuzzy search for a user by name or email",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Search successful"
+          },
+          "404": {
+            "description": "No users were found with that query"
+          },
+          "500": {
+            "description": "Server-side error while searching"
+          }
+        }
+      }
+    },
     "/scan": {
       "post": {
         "tags": [
@@ -820,16 +856,16 @@
         ],
         "responses": {
           "200": {
-            "description": "The user's application was successfully submitted"
+            "description": "The scan was successful"
           },
           "400": {
-            "description": "User's token or input data waS invalid"
+            "description": "The user has already been scanned for this event"
           },
           "404": {
             "description": "User could not be found"
           },
           "500": {
-            "description": "Error saving the application"
+            "description": "Error scanning"
           }
         }
       }

@@ -3,7 +3,7 @@ const Account   = require('../model/account');
 const Mail      = require('../model/mail');
 const formidable = require('formidable');
 const fs        = require('fs');
-const Fuse      = requier('fuse.js');
+const Fuse      = require('fuse.js');
 
 const UPLOAD_DIR = __dirname + "/resumes"
 
@@ -483,11 +483,17 @@ UsersController.getApplication = function(req, res){
 
 }
 
+/**
+ * Searches for users by full name or email
+ * 
+ * Req should contain 'name' which has the search term
+ */
 UsersController.search = function(req, res) {
 
     let name = req.body.name;
     Database.getAll(COLLECTION_NAME).then(function(result){
-        let users = result.data.map(user => {
+        // Filter out users that don't have an application
+        let users = result.filter(user => user.application).map(user => {
             return {
                 name: `${user.application.basicInfo.firstName} ${user.application.basicInfo.lastName}`, 
                 email: user.email, 
@@ -495,6 +501,7 @@ UsersController.search = function(req, res) {
             };
         });
 
+        // Default options from fuse's site
         const options = {
             shouldSort: true,
             threshold: 0.6,
@@ -503,7 +510,8 @@ UsersController.search = function(req, res) {
             maxPatternLength: 32,
             minMatchCharLength: 1,
             keys: [
-              "name"
+              "name",
+              "email"
             ]
           };
         let fuse = new Fuse(users, options);
@@ -515,6 +523,7 @@ UsersController.search = function(req, res) {
             res.sendStatus(404);
         }
     }).catch(function(err){
+        console.log(err);
         res.sendStatus(500);
     });
 
