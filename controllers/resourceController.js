@@ -1,4 +1,4 @@
-const generateId = require('shortid') // We're going to need this for creating the schedule
+const generateId = require('shortid') // We're going to need this for creating the resource
 const Database = require('../model/database');
 
 ResourceController = module.exports;
@@ -12,9 +12,9 @@ ResourceController.preflight = (req, res) => {
 
 ResourceController.getAll = (req, res, resource) => {
   
-  Database.getAll(resource).then((scheduleObject) => {
-    scheduleObject.version = scheduleObject.version.version; // Get version to the top-level
-    res.status(200).json(scheduleObject);
+  Database.getAll(resource).then((resourceObject) => {
+    resourceObject.version = resourceObject.version.version; // Get version to the top-level
+    res.status(200).json(resourceObject);
   }).catch((err) => {
     res.sendStatus(500);
   });
@@ -35,6 +35,8 @@ ResourceController.getVersion = (req, res, resource) => {
 
     Database.get(resource, "version").then((versionObj) => {
         res.status(200).json(versionObj.version);
+    }).catch(() => {
+        res.status(404).send(`'${resource}' does not have a version yet`);
     });
 
 };
@@ -46,10 +48,11 @@ ResourceController.add = (req, res, resource) => {
     // TODO: refactor so that the key doesn't need to be in the data
     req.body['id'] = id;
     Database.add(resource, 'id', req.body).then(() => {
-        return updateVersion();
+        return updateVersion(resource);
     }).then((version) => {
         res.status(200).json({"version": version, "id": id});
     }).catch((err) => {
+        console.log(err)
         res.sendStatus(500);
     });
 
@@ -58,7 +61,7 @@ ResourceController.add = (req, res, resource) => {
 ResourceController.edit = (req, res, resource) => {
 
     Database.update(resource, req.params.id, req.body).then(() => {
-        return updateVersion();
+        return updateVersion(resource);
     }).then((version) => {
         res.status(200).send({"version": version});
     }).catch(() => {
@@ -78,7 +81,15 @@ function updateVersion(resource){
                 reject(err);
             });
         }).catch((err) => {
-            reject(err);
+            // Error means the record has no version yet, add it
+            // Need to add this first as a workaround for the TODO above
+            return Database.add(resource, "version", {"version": "version"}).then((updateRes) => {
+                return Database.update(resource, "version", {"version": 1});
+            }).then((newVersion) => {
+                resolve(1);
+            }).catch((err) => {
+                reject(err);
+            });
         });
     });
 
