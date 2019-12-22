@@ -492,7 +492,6 @@ UsersController.search = function(req, res) {
 
     let name = req.body.name;
     Database.getAll(COLLECTION_NAME).then(function(result){
-        // Filter out users that don't have an application
         let users = result.map(user => {
             return {
                 firstName: user.application.basicInfo.firstName,
