@@ -41,6 +41,7 @@ router.post('/signin', UsersController.signin);
 router.post('/signout', UsersController.signout);
 router.post('/resetPassword', UsersController.resetPassword);
 router.get('/profile', UsersController.getProfile);
+router.post('/search', Authentication.authenticate('admin'), UsersController.search);
 
 router.get('/application', UsersController.getApplication);
 router.post('/application/save', UsersController.saveApplication);

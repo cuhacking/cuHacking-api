@@ -43,7 +43,7 @@ Authentication.init = function(admin){
 Authentication.authenticate = function(role){
 
     return [passport.authenticate('bearer'), function(req, res, next){
- 
+        
         if(req.user && ROLES[req.user.role] < ROLES[role]) {
             res.sendStatus(403);
             console.log("insufficient role");
