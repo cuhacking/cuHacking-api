@@ -3,6 +3,7 @@ const Account   = require('../model/account');
 const Mail      = require('../model/mail');
 const formidable = require('formidable');
 const fs        = require('fs');
+const Fuse      = require('fuse.js');
 
 const UPLOAD_DIR = __dirname + "/resumes"
 
@@ -23,6 +24,7 @@ const USER_SCHEMA = {
     role: "user",
     uid: null,
     rsvp: {},
+    scanned: [],
     application: {
         status: APPLICATION_STATUS.UNSTARTED,
         stage: 1,
@@ -477,6 +479,55 @@ UsersController.getApplication = function(req, res){
             status: 'failure',
             message: 'Token was invalid'
         });
+    });
+
+}
+
+/**
+ * Searches for users by full name or email
+ * 
+ * Req should contain 'name' which has the search term
+ */
+UsersController.search = function(req, res) {
+
+    let name = req.body.name;
+    Database.getAll(COLLECTION_NAME).then(function(result){
+        let users = result.map(user => {
+            return {
+                firstName: user.application.basicInfo.firstName,
+                lastName: user.application.basicInfo.lastName,
+                name: `${user.application.basicInfo.firstName} ${user.application.basicInfo.lastName}`, 
+                email: user.email, 
+                uid: user.uid
+            };
+        });
+
+        // Default options from fuse's site
+        const options = {
+            shouldSort: true,
+            threshold: 0.6,
+            location: 0,
+            distance: 100,
+            maxPatternLength: 32,
+            minMatchCharLength: 1,
+            keys: [
+              "name",
+              "email",
+              "firstName",
+              "lastName"
+            ]
+          };
+        let fuse = new Fuse(users, options);
+        let matches = fuse.search(name);
+          
+        if(matches){
+            res.status(200).send(matches);
+        } else {
+            res.sendStatus(404);
+        }
+    }).catch(function(err){
+        console.log(err);
+        res.sendStatus(500);
     });
 
 }

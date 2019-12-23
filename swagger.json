@@ -2,7 +2,7 @@
   "swagger": "2.0",
   "info": {
     "description": "This is the API for cuHacking 2020.",
-    "version": "1.2",
+    "version": "1.2-dev",
     "title": "Magneton (cuHacking 2020 API)",
     "license": {
       "name": "Apache 2.0",
@@ -35,6 +35,10 @@
     {
       "name": "Map",
       "description": "The map data"
+    },
+    {
+      "name": "QR Codes",
+      "description": "Handles scanning QR codes"
     }
   ],
   "schemes": [
@@ -982,6 +986,84 @@
           },
           "500": {
             "description": "Error saving the application"
+          }
+        }
+      }
+    },
+    "/users/search": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Fuzzy search for a user by name or email",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Search successful"
+          },
+          "404": {
+            "description": "No users were found with that query"
+          },
+          "500": {
+            "description": "Server-side error while searching"
+          }
+        }
+      }
+    },
+    "/scan": {
+      "post": {
+        "tags": [
+          "QR Codes"
+        ],
+        "summary": "Scans a user for an event",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "uid": {
+                  "type": "string"
+                },
+                "eventId": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The scan was successful"
+          },
+          "400": {
+            "description": "The user has already been scanned for this event"
+          },
+          "404": {
+            "description": "User could not be found"
+          },
+          "500": {
+            "description": "Error scanning"
           }
         }
       }

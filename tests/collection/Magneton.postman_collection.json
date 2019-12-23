@@ -1794,6 +1794,226 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "8. QR Codes",
+			"item": [
+				{
+					"name": "Scan QR Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8485f5d4-ac93-4507-bfae-9173317b5728",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uid\": \"ryan\",\n\t\"eventId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/scan",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scan Same QR Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8485f5d4-ac93-4507-bfae-9173317b5728",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uid\": \"ryan\",\n\t\"eventId\": \"1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/scan",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Scan New QR Code",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "8485f5d4-ac93-4507-bfae-9173317b5728",
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"uid\": \"ryan\",\n\t\"eventId\": \"2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/scan",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"scan"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search for User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "296364ed-a1e3-4502-9adc-4ae9a1948b67",
+								"exec": [
+									"let jsonData = pm.response.json();",
+									"pm.test(\"Status code is 200\", () => {",
+									"    pm.response.to.have.status(200);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"testing@test.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{SERVER}}/api-dev/users/search",
+							"host": [
+								"{{SERVER}}"
+							],
+							"path": [
+								"api-dev",
+								"users",
+								"search"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}
