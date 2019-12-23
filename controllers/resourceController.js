@@ -12,7 +12,7 @@ ResourceController.preflight = (req, res) => {
 
 ResourceController.getAll = (req, res, resource) => {
   
-  Database.getAll(resource).then((resourceObject) => {
+  Database.getAllWithKey(resource).then((resourceObject) => {
     resourceObject.version = resourceObject.version.version; // Get version to the top-level
     res.status(200).json(resourceObject);
   }).catch((err) => {
@@ -32,7 +32,7 @@ ResourceController.get = (req, res, resource) => {
 };
 
 ResourceController.getVersion = (req, res, resource) => {
-
+    
     Database.get(resource, "version").then((versionObj) => {
         res.status(200).json(versionObj.version);
     }).catch(() => {

@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "03e16929-458d-4c42-bf83-9978d335fc3a",
+		"_postman_id": "18ef3aec-00bf-41b4-9b0b-1becbdbdac98",
 		"name": "Magneton",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1267,10 +1267,10 @@
 									"});",
 									"",
 									"pm.test(\"Version is valid\", () => {",
-									"    pm.expect(jsonData.version).to.be.an('number');",
+									"    pm.expect(jsonData).to.be.an('number');",
 									"});",
 									"",
-									"pm.environment.set(\"SCHEDULE_VERSION\", jsonData.version);"
+									"pm.environment.set(\"SCHEDULE_VERSION\", jsonData);"
 								],
 								"type": "text/javascript"
 							}
@@ -1302,6 +1302,7 @@
 								"id": "d4cc2a97-2c4e-4abb-9ee8-9d2b7c7432c4",
 								"exec": [
 									"const jsonData = pm.response.json();",
+									"const prevVersion = parseInt(pm.environment.get(\"SCHEDULE_VERSION\"));",
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
 									"});",
@@ -1496,7 +1497,7 @@
 									"});",
 									"",
 									"pm.test(\"Version was correctly updated\", () => {",
-									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
+									"    pm.expect(jsonData).to.eql(prevVersion + 1); ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1534,10 +1535,10 @@
 									"});",
 									"",
 									"pm.test(\"Version is valid\", () => {",
-									"    pm.expect(jsonData.version).to.be.an('number');",
+									"    pm.expect(jsonData).to.be.an('number');",
 									"});",
 									"",
-									"pm.environment.set(\"UPDATE_VERSION\", jsonData.version);"
+									"pm.environment.set(\"UPDATE_VERSION\", jsonData);"
 								],
 								"type": "text/javascript"
 							}
@@ -1623,45 +1624,6 @@
 					"response": []
 				},
 				{
-					"name": "Check Update Version Updated",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "babd6787-4e35-4fb5-96a4-5a8ead1b1f20",
-								"exec": [
-									"const jsonData = pm.response.json();",
-									"const prevVersion = parseInt(pm.environment.get(\"UPDATE_VERSION\"));",
-									"pm.test(\"Status code is 200\", () => {",
-									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Version was correctly updated\", () => {",
-									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{SERVER}}/api-dev/updates/version",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"api-dev",
-								"updates",
-								"version"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Check Added Update",
 					"event": [
 						{
@@ -1709,10 +1671,10 @@
 									"});",
 									"",
 									"pm.test(\"Version is valid\", () => {",
-									"    pm.expect(jsonData.version).to.be.an('number');",
+									"    pm.expect(jsonData).to.be.an('number');",
 									"});",
 									"",
-									"pm.environment.set(\"MAP_VERSION\", jsonData.version);"
+									"pm.environment.set(\"MAP_VERSION\", jsonData);"
 								],
 								"type": "text/javascript"
 							}
@@ -1768,6 +1730,11 @@
 								"name": "Content-Type",
 								"value": "application/json",
 								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{API_KEY}}",
+								"type": "text"
 							}
 						],
 						"body": {
@@ -1793,21 +1760,16 @@
 					"response": []
 				},
 				{
-					"name": "Check Map Version Updated",
+					"name": "Get Map",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "d14834e4-9c1f-4860-8420-bb86cb776b82",
+								"id": "6e7d3b6d-ea3e-49df-8036-a8d25389ce56",
 								"exec": [
 									"const jsonData = pm.response.json();",
-									"const prevVersion = parseInt(pm.environment.get(\"MAP_VERSION\"));",
 									"pm.test(\"Status code is 200\", () => {",
 									"    pm.response.to.have.status(200);",
-									"});",
-									"",
-									"pm.test(\"Version was correctly updated\", () => {",
-									"    pm.expect(jsonData.version).to.eql(prevVersion + 1); ",
 									"});"
 								],
 								"type": "text/javascript"
@@ -1818,33 +1780,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{SERVER}}/api-dev/map/version",
+							"raw": "{{SERVER}}/api-dev/map",
 							"host": [
 								"{{SERVER}}"
 							],
 							"path": [
 								"api-dev",
-								"map",
-								"version"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get Map",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{SERVER}}/api-dev/map/{{MAP_ID}}",
-							"host": [
-								"{{SERVER}}"
-							],
-							"path": [
-								"api-dev",
-								"map",
-								"{{MAP_ID}}"
+								"map"
 							]
 						}
 					},

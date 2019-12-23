@@ -106,6 +106,35 @@ Database.getAll = function(collection, limit=0){
 
 
 /**
+ * Returns all the items as a object, with each item's id as the key
+ * 
+ * @param {string}      collection - The name of the collection to get items from
+ * 
+ * @return  {Object}               - An object representing the data in the collection
+ */
+Database.getAllWithKey = function(collection){
+    
+    let promise = new Promise(function(resolve, reject){
+        let collectionRef = db.collection(collection);
+        let res = {};
+        collectionRef.get().then(function(snapshot){
+            
+            snapshot.forEach(function(doc){
+                res[doc.id] = doc.data();
+            });
+    
+            resolve(res);
+        
+        }).catch(function(err){
+            reject(err);
+        });
+    });
+
+    return promise;
+}
+
+
+/**
  * Get a specific item by id from a specific collection in the database
  * 
  * @param {string}      collection - The name of the collection to get the item from
