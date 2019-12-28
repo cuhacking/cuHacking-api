@@ -33,6 +33,10 @@
       "description": "Applications for the event"
     },
     {
+      "name": "Map",
+      "description": "The map data"
+    },
+    {
       "name": "QR Codes",
       "description": "Handles scanning QR codes"
     }
@@ -595,6 +599,31 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Create a schedule event",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Schedule version successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No schedule version exists yet"
+          }
+        }
       }
     },
     "/schedule/{id}": {
@@ -651,6 +680,33 @@
         }
       }
     },
+    "/schedule/version": {
+      "get": {
+        "tags": [
+          "Schedule"
+        ],
+        "summary": "Get the current schedule version",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Event successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Event was not found"
+          }
+        }
+      }
+    },
     "/updates": {
       "get": {
         "tags": [
@@ -696,6 +752,148 @@
                 }
               }
             }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Updates"
+        ],
+        "summary": "Create a new update",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Update successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/updates/{id}": {
+      "get": {
+        "tags": [
+          "Updates"
+        ],
+        "summary": "Get a single update",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "string",
+            "required": true,
+            "description": "The ID of the update"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Event successfully retrieved"
+          },
+          "404": {
+            "description": "Update was not found"
+          }
+        }
+      }
+    },
+    "/updates/version": {
+      "get": {
+        "tags": [
+          "Updates"
+        ],
+        "summary": "Get the current update version",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Updates version successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No update version exists yet"
+          }
+        }
+      }
+    },
+    "/map": {
+      "get": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Retrieve the map data",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "The map has been retrieved"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Create a new map",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Map successfully created",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/map/version": {
+      "get": {
+        "tags": [
+          "Map"
+        ],
+        "summary": "Get the current map version",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Map version successfully retrieved",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "version": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No map version exists yet"
           }
         }
       }
