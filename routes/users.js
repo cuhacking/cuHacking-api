@@ -47,7 +47,7 @@ router.get('/application', UsersController.getApplication);
 router.post('/application/save', UsersController.saveApplication);
 router.post('/application/submit', upload.single('resume'), UsersController.submitApplication);
 
-router.get('/:uid', Authentication.authenticate("user"), UsersController.getByEmail);
+router.get('/:uid', Authentication.authenticate("user"), UsersController.getByUid);
 router.patch('/:uid', Authentication.authenticate("user"), UsersController.update);
 router.delete('/:uid', Authentication.authenticate("admin"), UsersController.delete);
 

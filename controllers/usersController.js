@@ -197,10 +197,10 @@ UsersController.get = function(req, res){
 }
 
 
-UsersController.getByEmail = function(req, res){
+UsersController.getByUid = function(req, res){
 
-    let email = req.params.email;
-    Database.search(COLLECTION_NAME, 'email', email).then(function(databaseResult){
+    let uid = req.params.uid;
+    Database.search(COLLECTION_NAME, 'uid', uid).then(function(databaseResult){
 
         if(req.user.role != "admin" && req.user.uid !== databaseResult.uid){
             res.status(403).send({

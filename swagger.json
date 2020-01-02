@@ -450,7 +450,7 @@
                 "username": {
                   "type": "string"
                 },
-                "token": {
+                "password": {
                   "type": "string"
                 }
               }
@@ -1015,7 +1015,30 @@
         ],
         "responses": {
           "200": {
-            "description": "Search successful"
+            "description": "Search successful",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "firstName": {
+                    "type": "string"
+                  },
+                  "lastName": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "uid": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
           },
           "404": {
             "description": "No users were found with that query"
