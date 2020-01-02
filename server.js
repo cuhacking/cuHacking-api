@@ -7,7 +7,6 @@ const Account = require('./model/account');
 
 const app = express();
 const routes = require('./routes/routes');
-const mailing_list = require('./routes/mailinglist');
 const schedule = require('./routes/schedule');
 const updates = require('./routes/updates');
 const users = require('./routes/users');
@@ -63,7 +62,6 @@ Account.init(firebase, admin);
 
 // Handle API endpoints
 app.use(API_ROOT, routes);
-app.use(API_ROOT + '/mailinglist/', mailing_list);
 app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swaggerDocument));
 app.use(API_ROOT + '/schedule/', schedule);
 app.use(API_ROOT + '/updates/', updates);
