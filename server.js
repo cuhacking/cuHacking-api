@@ -4,6 +4,7 @@ const cors = require('cors');
 const Authentication = require('./model/authentication');
 const Database = require('./model/database');
 const Account = require('./model/account');
+const ResourceController = require('./controllers/resourceController');
 
 const app = express();
 const routes = require('./routes/routes');
@@ -59,6 +60,7 @@ app.use((error, req, res, next) => {
 Authentication.init(admin);
 Database.init(admin);
 Account.init(firebase, admin);
+ResourceController.init();
 
 // Handle API endpoints
 app.use(API_ROOT, routes);
