@@ -11,8 +11,9 @@ const routes = require('./routes/routes');
 const schedule = require('./routes/schedule');
 const updates = require('./routes/updates');
 const users = require('./routes/users');
-const map = require('./routes/map')
+const map = require('./routes/map');
 const scan = require('./routes/scan');
+const info = require('./routes/info');
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
@@ -68,6 +69,7 @@ app.use(API_ROOT + '/docs', [basicAuth,swaggerUi.serve], swaggerUi.setup(swagger
 app.use(API_ROOT + '/schedule/', schedule);
 app.use(API_ROOT + '/updates/', updates);
 app.use(API_ROOT + '/map/', map);
+app.use(API_ROOT + '/info/', info);
 app.use(API_ROOT + '/users/', users);
 app.use(API_ROOT + '/scan/', scan);
 
