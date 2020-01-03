@@ -5,13 +5,15 @@ const path = require('path');
 const FILE_NAMES = {
     schedule: "schedule.json",
     updates: "updates.json",
-    map: "map.json"
+    map: "map.json",
+    info: "info.json"
 };
 
 let values = {
     schedule: {version: -1, schedule: {}},
     updates: {version: -1, updates: {}},
-    map: {version: -1, map: {}}
+    map: {version: -1, map: {}},
+    info: {version: -1, info: {}}
 };
 
 Resource = module.exports;
