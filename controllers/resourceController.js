@@ -1,6 +1,3 @@
-const generateId = require('shortid') // We're going to need this for creating the resource
-const fs = require('fs');
-const path = require('path');
 const Resource = require('../model/resource');
 
 ResourceController = module.exports;
