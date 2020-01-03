@@ -1371,7 +1371,7 @@
 									"});",
 									"",
 									"pm.test(\"New schedule event is present\", () => {",
-									"    let eventIds = Object.keys(jsonData);",
+									"    let eventIds = Object.keys(jsonData.schedule);",
 									"    console.log(eventIds)",
 									"    pm.expect(eventIds).to.include(pm.environment.get(\"SCHEDULE_EVENT\"));",
 									"});"
