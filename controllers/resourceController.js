@@ -1,5 +1,4 @@
-const generateId = require('shortid') // We're going to need this for creating the resource
-const Database = require('../model/database');
+const Resource = require('../model/resource');
 
 ResourceController = module.exports;
 
@@ -12,86 +11,53 @@ ResourceController.preflight = (req, res) => {
 
 ResourceController.getAll = (req, res, resource) => {
   
-  Database.getAllWithKey(resource).then((resourceObject) => {
-    resourceObject.version = resourceObject.version.version; // Get version to the top-level
-    res.status(200).json(resourceObject);
-  }).catch((err) => {
-    res.sendStatus(500);
-  });
+    Resource.getAll(resource).then((result) => {
+        res.status(200).send(result);
+    }).catch(() => {
+        res.sendStatus(404)
+    });
 
 };
 
 ResourceController.get = (req, res, resource) => {
     
-    Database.get(resource, req.params.id).then((event) => {
-        res.status(200).json(event);
-    }).catch((err) => {
+    Resource.get(resource, req.params.id).then((result) => {
+        res.status(200).send(result); 
+    }).catch(() => {
         res.sendStatus(404);
     });
 
 };
 
+/**
+ * Returns the last modified time timestamp of the resource
+ */
 ResourceController.getVersion = (req, res, resource) => {
     
-    Database.get(resource, "version").then((versionObj) => {
-        res.status(200).json(versionObj.version);
+    Resource.getVersion(resource).then((result) => {
+        res.status(200).send(result);
     }).catch(() => {
-        res.status(404).send(`'${resource}' does not have a version yet`);
+        res.sendStatus(404);
     });
 
 };
 
 ResourceController.add = (req, res, resource) => {
 
-    let id = generateId.generate();
-    // Need to do this since database model gets the key from the data
-    // TODO: refactor so that the key doesn't need to be in the data
-    req.body['id'] = id;
-    Database.add(resource, 'id', req.body).then(() => {
-        return updateVersion(resource);
-    }).then((version) => {
-        res.status(200).json({"version": version, "id": id});
+    Resource.add(resource, req.body).then((result) => {
+        res.status(200).send(result);
     }).catch((err) => {
-        console.log(err)
-        res.sendStatus(500);
+        res.status(500).send(err);
     });
 
 };
 
 ResourceController.edit = (req, res, resource) => {
 
-    Database.update(resource, req.params.id, req.body).then(() => {
-        return updateVersion(resource);
-    }).then((version) => {
-        res.status(200).send({"version": version});
-    }).catch(() => {
-        res.sendStatus(500);
-    });
+    Resource.edit(resource, req.params.id, req.body).then(() => {
+        res.sendStatus(200);
+    }).catch((err) => {
+        res.status(500).send(err);
+    })
 
 };
-
-function updateVersion(resource){
-
-    let promise = new Promise((resolve, reject) => {
-        Database.get(resource, "version").then((version) => {
-            let newVersion = parseInt(version.version) + 1;
-            return Database.update(resource, "version", {"version": newVersion}).then((updateRes) => {
-                resolve(newVersion);
-            }).catch((err) => {
-                reject(err);
-            });
-        }).catch((err) => {
-            // Error means the record has no version yet, add it
-            // Need to add this first as a workaround for the TODO above
-            return Database.add(resource, "version", {"version": "version"}).then((updateRes) => {
-                return Database.update(resource, "version", {"version": 1});
-            }).then((newVersion) => {
-                resolve(1);
-            }).catch((err) => {
-                reject(err);
-            });
-        });
-    });
-
-    return promise;
-}
