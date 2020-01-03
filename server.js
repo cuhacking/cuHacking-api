@@ -40,7 +40,7 @@ admin.initializeApp({
 firebase.initializeApp(config[env].firebase_account_config);
 
 // Middleware for handling JSON bodies
-app.use(express.json())
+app.use(express.json({ limit: '50mb' }));
 app.use(passport.initialize());
 
 // Log each request the server receives
