@@ -8,11 +8,11 @@ const Authentication = require('../model/authentication');
 router.options('*', cors());
 router.use(cors())
 
-router.get('/', (req, res) => {ResourceController.getAll(req, res, 'Schedule')});
-router.get('/version', (req, res) => {ResourceController.getVersion(req, res, 'Schedule')});
-router.get('/:id', (req, res) => {ResourceController.get(req, res, 'Schedule')});
+router.get('/', (req, res) => {ResourceController.getAll(req, res, 'schedule')});
+router.get('/version', (req, res) => {ResourceController.getVersion(req, res, 'schedule')});
+router.get('/:id', (req, res) => {ResourceController.get(req, res, 'schedule')});
 
-router.post('/', Authentication.authenticate("admin"), (req, res) => {ResourceController.add(req, res, 'Schedule')});
-router.patch('/:id', Authentication.authenticate("admin"), (req, res) => {ResourceController.edit(req, res, 'Schedule')});
+router.post('/', Authentication.authenticate("admin"), (req, res) => {ResourceController.add(req, res, 'schedule')});
+router.patch('/:id', Authentication.authenticate("admin"), (req, res) => {ResourceController.edit(req, res, 'schedule')});
 
 module.exports = router;

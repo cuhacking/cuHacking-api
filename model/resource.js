@@ -3,15 +3,15 @@ const fs = require('fs');
 const path = require('path');
 
 const FILE_NAMES = {
-    Schedule: "schedule.json",
-    Updates: "updates.json",
-    Map: "map.json"
+    schedule: "schedule.json",
+    updates: "updates.json",
+    map: "map.json"
 };
 
 let values = {
-    Schedule: {},
-    Updates: {},
-    Map: {}
+    schedule: {version: -1, schedule: {}},
+    updates: {version: -1, updates: {}},
+    map: {version: -1, map: {}}
 };
 
 Resource = module.exports;
@@ -33,7 +33,7 @@ Resource.init = () => {
                 if(err.code === 'ENOENT'){
                     // File doesn't exist - create it
                     console.log(`File ${filename} does not exist, creating it...`);
-                    fs.writeFile(filename, JSON.stringify({}), (err) => {
+                    fs.writeFile(filename, JSON.stringify(values[resource]), (err) => {
                         if(err) console.log(`Error creating file ${filename}`);
 
                         console.log(`Watching ${filename} for resource ${resource}`);
@@ -42,6 +42,10 @@ Resource.init = () => {
                             fs.readFile(filename, (err, data) => {
                                 if(err) throw err;
                                 values[resource] = JSON.parse(data);
+
+                                Resource.getVersion(resource).then((version) => {
+                                   values[resource]["version"] = version; 
+                                });
                             });
                         });
                     })
@@ -51,7 +55,7 @@ Resource.init = () => {
                 }
                 
             } else {
-                // FIle exists - read it
+                // File exists - read it
                 values[resource] = JSON.parse(data);
                 console.log(`Watching ${filename} for resource ${resource}`);
                 fs.watchFile(filename, (curr, prev) => {
@@ -59,6 +63,10 @@ Resource.init = () => {
                     fs.readFile(filename, (err, data) => {
                         if(err) throw err;
                         values[resource] = JSON.parse(data);
+
+                        Resource.getVersion(resource).then((version) => {
+                            values[resource]["version"] = version; 
+                         });
                     });
                 });
             }
@@ -97,9 +105,9 @@ Resource.getAll = (resource) => {
 Resource.get = (resource, id) => {
     
     let promise = new Promise((resolve, reject) => { 
-        if(values[resource]){
-            if(id in values[resource]){
-                resolve(values[resource][id]);
+        if(values[resource][resource]){
+            if(id in values[resource][resource]){
+                resolve(values[resource][resource][id]);
             }
         }
         reject("Not found");
@@ -141,14 +149,18 @@ Resource.add = (resource, body) => {
 
     let promise = new Promise((resolve, reject) => {
         let id = generateId.generate();
-        values[resource][id] = body;
-        fs.writeFile(FILE_NAMES[resource], JSON.stringify(values[resource]), (err) => {
-            if(err) reject(err);
-            resolve({
-                id: id,
-                body: body
+        values[resource][resource][id] = body;
+        Resource.getVersion(resource).then((version) => {
+            values[resource]["version"] = version; 
+
+            fs.writeFile(FILE_NAMES[resource], JSON.stringify(values[resource]), (err) => {
+                if(err) reject(err);
+                resolve({
+                    id: id,
+                    body: body
+                });
             });
-        });
+         });
     });
 
     return promise;
@@ -166,11 +178,19 @@ Resource.add = (resource, body) => {
 Resource.edit = (resource, id, body) => {
 
     let promise = new Promise((resolve, reject) => {
-        values[resource][id] = Object.assign(values[resource][id], body);
-        fs.writeFile(FILE_NAMES[resource], JSON.stringify(values[resource]), (err) => {
-            if(err) reject(err);
-            resolve(200);
+        values[resource][resource][id] = Object.assign(values[resource][resource][id], body);
+
+        Resource.getVersion(resource).then((version) => {
+            values[resource]["version"] = version;
+            fs.writeFile(FILE_NAMES[resource], JSON.stringify(values[resource]), (err) => {
+                if(err) reject(err);
+                resolve({
+                    id: id,
+                    body: body
+                });
+            }); 
         });
+
     });
 
     return promise;
