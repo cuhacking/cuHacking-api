@@ -132,7 +132,7 @@ Resource.getVersion = (resource) => {
                 console.log(`Error stating file ${FILE_NAMES[resources]}; Error: ${err}`);
                 reject(err);
             }
-            resolve(stats.mtime);
+            resolve({"version": stats.mtime});
         });
     });
 
