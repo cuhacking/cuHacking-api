@@ -15,11 +15,19 @@ ScannerController.scan = function(req, res){
     Database.get(COLLECTION_NAME, uid).then(function(user){
 
         let scanned = [];
+
+        if(user.appStatus !== "attending" && user.appStatus !== "accepted"){
+            return res.status(403).send("User is not accepted to the event");
+        }
+
         if(user.scanned){
             scanned = user.scanned;
             if(scanned.includes(eventId)){
                 return res.status(400).send("User has already been scanned for this event")
             }
+        }
+        if(!scanned.includes("registration")){
+            scanned.push("registration");
         }
         scanned.push(eventId);
 
