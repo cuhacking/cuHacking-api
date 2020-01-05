@@ -45,8 +45,8 @@ Resource.init = () => {
                                 if(err) throw err;
                                 values[resource] = JSON.parse(data);
 
-                                Resource.getVersion(resource).then((version) => {
-                                   values[resource]["version"] = version; 
+                                fs.stat(filename, (err, stats) => {
+                                   values[resource]["version"] = stats.mtime; 
                                 });
                             });
                         });
