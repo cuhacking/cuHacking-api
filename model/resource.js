@@ -152,8 +152,8 @@ Resource.add = (resource, body) => {
     let promise = new Promise((resolve, reject) => {
         let id = generateId.generate();
         values[resource][resource][id] = body;
-        Resource.getVersion(resource).then((version) => {
-            values[resource]["version"] = version; 
+        fs.stat(FILE_NAMES[resource], (err, stats) => {
+            values[resource]["version"] = stats.mtime; 
 
             fs.writeFile(FILE_NAMES[resource], JSON.stringify(values[resource]), (err) => {
                 if(err) reject(err);
@@ -182,8 +182,8 @@ Resource.edit = (resource, id, body) => {
     let promise = new Promise((resolve, reject) => {
         values[resource][resource][id] = Object.assign(values[resource][resource][id], body);
 
-        Resource.getVersion(resource).then((version) => {
-            values[resource]["version"] = version;
+        fs.stat(FILE_NAMES[resource], (err, stats) => {
+            values[resource]["version"] = stats.mtime;
             fs.writeFile(FILE_NAMES[resource], JSON.stringify(values[resource]), (err) => {
                 if(err) reject(err);
                 resolve({
