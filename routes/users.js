@@ -21,7 +21,6 @@ const ALLOWED_ORIGIN = config[env].allowed_origin || 'http://localhost:3000';
 
 const UsersController = require('../controllers/usersController');
 const Authentication = require('../model/authentication');
-const MailListController = require('../controllers/mailListController');
 
 // Enable CORS
 const corsOptions = {
@@ -41,12 +40,9 @@ router.post('/signin', UsersController.signin);
 router.post('/signout', UsersController.signout);
 router.post('/resetPassword', UsersController.resetPassword);
 router.get('/profile', UsersController.getProfile);
+router.post('/search', Authentication.authenticate('admin'), UsersController.search);
 
-router.get('/application', UsersController.getApplication);
-router.post('/application/save', UsersController.saveApplication);
-router.post('/application/submit', upload.single('resume'), UsersController.submitApplication);
-
-router.get('/:uid', Authentication.authenticate("user"), UsersController.getByEmail);
+router.get('/:uid', Authentication.authenticate("user"), UsersController.getByUid);
 router.patch('/:uid', Authentication.authenticate("user"), UsersController.update);
 router.delete('/:uid', Authentication.authenticate("admin"), UsersController.delete);
 
