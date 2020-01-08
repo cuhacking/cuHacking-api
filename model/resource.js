@@ -151,6 +151,7 @@ Resource.add = (resource, body) => {
 
     let promise = new Promise((resolve, reject) => {
         let id = generateId.generate();
+        body["id"] = id;
         values[resource][resource][id] = body;
         fs.stat(FILE_NAMES[resource], (err, stats) => {
             values[resource]["version"] = stats.mtime; 
