@@ -19,7 +19,7 @@ let values = {
 Resource = module.exports;
 
 /**
- * Inititalizes the resource controller
+ * Initializes the resource controller
  * Sets up file watchers for each of the json files
  * 
  */
